@@ -40,30 +40,30 @@ class WorkoutFrame extends JFrame{
         Container center = new Container();
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BorderLayout());
-        textField = new JTextField("텍스트 필드");
+        textField = new JTextField("�뀓�뒪�듃 �븘�뱶");
         leftPanel.add(textField,BorderLayout.CENTER);
         contentPlane.add(leftPanel,BorderLayout.CENTER);
 
-        //오른쪽 버튼 패널
+        //�삤瑜몄そ 踰꾪듉 �뙣�꼸
         JPanel rightPanel = new JPanel();
         JPanel textPanel = new JPanel();
 
         //textPanel.setLayout(new GridLayout(5,2));
        textPanel.setLayout(new GridLayout(10,1));
-        JLabel exerciseLabel = new JLabel("운동 부위");
+        JLabel exerciseLabel = new JLabel("�슫�룞 遺��쐞");
         JTextField exercise = new JTextField(4);
-        JLabel exerciseNameLabel = new JLabel("운동 이름");
+        JLabel exerciseNameLabel = new JLabel("�슫�룞 �씠由�");
         JTextField exerciseName = new JTextField(4);
-        JLabel exerciseSetLabel = new JLabel("세트");
+        JLabel exerciseSetLabel = new JLabel("�꽭�듃");
         JTextField exerciseSet = new JTextField(4);
-        JLabel exerciseRepsLabel = new JLabel("횟수");
+        JLabel exerciseRepsLabel = new JLabel("�슏�닔");
         JTextField exerciseReps = new JTextField(4);
-        JLabel exerciseWeightLabel = new JLabel("중량");
+        JLabel exerciseWeightLabel = new JLabel("以묐웾");
         JTextField exerciseWeight = new JTextField(4);
-        JLabel exerciseDateLabel = new JLabel("날짜");
-        JLabel exerciseDateYearLabel = new JLabel("년");
-        JLabel exerciseDateMonthLabel = new JLabel("월");
-        JLabel exerciseDateDayLabel = new JLabel("일");
+        JLabel exerciseDateLabel = new JLabel("�궇吏�");
+        JLabel exerciseDateYearLabel = new JLabel("�뀈");
+        JLabel exerciseDateMonthLabel = new JLabel("�썡");
+        JLabel exerciseDateDayLabel = new JLabel("�씪");
 
         JPanel datePanel = new JPanel();
         JTextField exerciseDateYear = new JTextField(4);
@@ -89,8 +89,8 @@ class WorkoutFrame extends JFrame{
         textPanel.add(exerciseDateLabel);
         textPanel.add(datePanel);
         JPanel btnPanel = new JPanel();
-        JButton addExercise = new JButton("운동 추가");
-        JButton searchExercise = new JButton("운동 찾기");
+        JButton addExercise = new JButton("�슫�룞 異붽�");
+        JButton searchExercise = new JButton("�슫�룞 李얘린");
 
         JPanel emptyPanel = new JPanel();
         btnPanel.setLayout(new FlowLayout());
@@ -133,7 +133,7 @@ class WorkoutFrame extends JFrame{
 
 
             //((Trainee)Main.memberSet.get(id))
-            //Date객체가 같은지 확인 -> 같으면 해당 workoutList의 ExercisList에 Exercise를 추가
+            //Date媛앹껜媛� 媛숈�吏� �솗�씤 -> 媛숈쑝硫� �빐�떦 workoutList�쓽 ExercisList�뿉 Exercise瑜� 異붽�
         }
     }
     private class SearchExerciseAction implements ActionListener{
@@ -145,9 +145,9 @@ class WorkoutFrame extends JFrame{
         }
         @Override
         public void actionPerformed(ActionEvent e) {
-            //날짜가 같은 WorkoutList에서 getExercise
+            //�궇吏쒓� 媛숈� WorkoutList�뿉�꽌 getExercise
             Date date = new Date(year,month,day);
-            WorkoutList dateWorkout = ((Trainee)Main.memberSet.get(id)).getWorkoutList(date);
+            //WorkoutList dateWorkout = ((Trainee)Main.memberSet.get(id)).getWorkoutList();
             textField.setText(dateWorkout.getExercise());
         }
     }

@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 class WorkoutList {
 	private ArrayList<Exercise> exerciseList = new ArrayList<>();
-	private Date exerciseDate = new Date();
+	private Date exerciseDate;
 	
 	public WorkoutList() {
 		addWorkout();
@@ -80,13 +80,17 @@ class WorkoutList {
 	public Date getDate() {
 		return this.exerciseDate;
 	}
-	public ArrayList<Exercise> getExerciseList(){
-		return this.exerciseList;
-	}
-	
 	public void setDate(int y,int m,int d) {
 		this.exerciseDate = new Date(y,m,d);
 	}
+	
+	public ArrayList<Exercise> getExerciseList(){
+		return this.exerciseList;
+	}
+	public void setExerciseList(ArrayList<Exercise> exList) {
+		this.exerciseList = exList;
+	}
+	
 
 }
 
@@ -101,9 +105,9 @@ class Date{
 		this.day=day;
 	}
 
-	@Override
-	public boolean equals(Object object){
-		return ((Date) object).getYear() == this.year && ((Date) object).getMonth() == this.month && ((Date) object).getDay() == this.day;
+
+	public boolean equals(Date date){
+		return date.getYear() == this.year && date.getMonth() == this.month && date.getDay() == this.day;
 	}
 
 	@Override

@@ -147,8 +147,7 @@ class WorkoutFrame extends JFrame{
         public void actionPerformed(ActionEvent e) {
             //날짜가 같은 WorkoutList에서 getExercise
             Date date = new Date(year,month,day);
-            WorkoutList dateWorkout = ((Trainee)Main.memberSet.get(id)).getWorkoutList(date);
-            textField.setText(dateWorkout.getExercise());
+            textField.setText(((Trainee)Main.memberSet.get(id)).getWorkoutList());
         }
     }
 

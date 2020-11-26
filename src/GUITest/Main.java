@@ -214,76 +214,74 @@ public class Main {
 	
 	public static void readWorkout(File file) throws Exception {
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(file));
-			String line = "";
-			line=br.readLine().split(",")[0];
-			int id = Integer.valueOf(line);
+			Scanner sc = new Scanner(file);
+			
+			String temp;
+			String[] splited;
+			
+			
+			int id = Integer.valueOf(sc.nextLine().split(",")[0]);
 			int idx=0;
-			for(int i = 0;i<memberSet.size();i++) {
-				if(memberSet.get(i).getId()==id) {
-					idx = i;
-				}
+			int t=0;
+			for(Member m : memberSet) {
+				if(m.getId() == id) idx = t;
+				t++;	
 			}
 			
-			while((line=br.readLine())!=null) {
-				List<String> tmp = new ArrayList<String>();
-				String arr[] = line.split(",");
-				tmp=Arrays.asList(arr);
-				int dy=0,dm=0,dd=0,ereps=0,eset=0;
-				double weight=0,eweight=0;
-				String ename="",etarget="";
+			
+			while(sc.hasNextLine()) {
+				WorkoutList tList;
+				ArrayList<Exercise> exList=new ArrayList<>();
 				
-				if(tmp.size()==4) {
-					for(int i=0;i<4;i++) {
-						switch(i) {	
-							case 0:
-								dy = Integer.valueOf(tmp.get(i));
-								break;
-							case 1:
-								dm = Integer.valueOf(tmp.get(i));
-								break;
-							case 2:
-								dd = Integer.valueOf(tmp.get(i));
-								break;
-							case 3:
-								weight = Double.valueOf(tmp.get(i));
-								break;
+				int exSize = Integer.valueOf(sc.nextLine().split(",")[0]);
+				
+				System.out.println("exSize "+ exSize);
+				
+				int dd=0,dm=0,dy=0;
+				temp = sc.nextLine();
+				splited = temp.split(",");
+				dy = Integer.valueOf(splited[0]);
+				dm = Integer.valueOf(splited[1]);
+				dd = Integer.valueOf(splited[2]);
+				
+				for(int i=0;i<exSize;i++) {
+					 Exercise tExercise;
+					String eName="", eTarget = ""; int reps=0,set=0; double eWeight=0;
+					temp =sc.nextLine();
+					splited = temp.split(",");
+					for(int j=0;j<splited.length;j++) {
+						switch(j) {
+						case 0:
+							eName = splited[j];
+							break;
+						case 1:
+							eTarget = splited[j];
+							break;
+						case 2:
+							reps = Integer.valueOf(splited[j]);
+							break;
+						case 3:
+							set = Integer.valueOf(splited[j]);
+							break;
+						case 4:
+							eWeight = Double.valueOf(splited[j]);
+							break;
 						}
 					}
-					
+					tExercise = new Exercise(eName,eTarget,reps,set,eWeight);
+					System.out.println(tExercise.toString());
+					exList.add(tExercise);
 				}
-				WorkoutList tWorkoutList = new WorkoutList(dy,dm,dd);
-				if(tmp.size()==5) {
-					for(int i=0;i<5;i++) {	 
-						switch(i) {
-							case 0:
-								ename = tmp.get(i);
-								break;
-							case 1:
-								etarget = tmp.get(i);
-								break;
-							case 2:
-								ereps = Integer.valueOf(tmp.get(i));
-								break;
-							case 3:
-								eset = Integer.valueOf(tmp.get(i));
-								break;
-							case 4:
-								eweight =Double.valueOf(tmp.get(i));
-								break;
-						}
-					}
-					//Exercise 리스트를 만들어서 다음 날짜 전까지 받은 다음 workoutList객체생성해서 넣어줘야함.
-					Exercise tExercise = new Exercise(ename,etarget,ereps,eset,eweight);
-					tWorkoutList.addExercise(tExercise);
-				}
-				System.out.println("Date :"+tWorkoutList.getDate().toString());
-				for(Exercise e : tWorkoutList.getExerciseList()) {
-					System.out.println(e.toString());
-				}
-				((Trainee)memberSet.get(idx)).loadWorkout(tWorkoutList);
+				tList = new WorkoutList(dy, dm, dd);
+				//List.setDate(dy, dm, dd);
+				tList.setExerciseList(exList);
+				((Trainee)memberSet.get(idx)).loadWorkout(tList);
+				
+				//System.out.println(((Trainee)memberSet.get(idx)).getWorkoutList(new Date(dy,dm,dd)).toString());
+				
 			}
-	
+			
+			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			throw new Exception("회원 명단 불러오기를 실패하였습니다.");		

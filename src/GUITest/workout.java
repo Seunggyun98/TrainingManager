@@ -28,7 +28,8 @@ import java.util.*;
 					
 					break;
 				case 3:
-					SelectWorkOut(member);
+					//SelectWorkOut(member);
+					((Trainee)member).getWorkoutList();
 					break;
 				default:
 					System.out.println("다시 선택해주세요.");
@@ -42,18 +43,18 @@ import java.util.*;
 			}
 		}
 	}
-	private void SelectWorkOut(Member member) {
+	/*private void SelectWorkOut(Member member) {
 		int idx = 1;
 		Date date = new Date(2020,10,22);
 		if(member.getType()==2) {
-			WorkoutList exerciseList = ((Trainee)member).getWorkoutList(date);
+			WorkoutList exerciseList = ((Trainee)member).getWorkoutList();
 			System.out.println(exerciseList.getDate().toString());
 			for(Exercise e : exerciseList.getExerciseList()) {
 				System.out.println(idx+". 부위 : "+e.getTargetMuscle()+" 종목 : "+e.getExName()+" 세트 : "+e.getSet()+" 횟수 : "+e.getReps()+" 무게 : "+e.getWeight());
 			}	
 		}
 	}
-	
+	*/
 	public workout() {
 		
 	}

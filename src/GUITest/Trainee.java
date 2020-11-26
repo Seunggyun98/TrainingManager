@@ -38,13 +38,12 @@ class Trainee extends Member {
 		this.workoutList.add(add);
 	}
 	
-	public WorkoutList getWorkoutList(Date date){
-		for(WorkoutList wl : workoutList){
-			if(wl.getDate().equals(date)){
-				return wl;
-			}
+	public String getWorkoutList(){
+		WorkoutList wlist = new WorkoutList(0,0,0);
+		for(WorkoutList wl : workoutList) {
+			wlist = wl;
 		}
-		return null;
+		return wlist.getExercise();
 	}
 	public ArrayList<WorkoutList> listOfWorkOut(){
 		return this.workoutList;
