@@ -6,7 +6,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 class WorkoutList {
-	private ArrayList<Exercise> exerciseList = new ArrayList<>();
+	private ArrayList<Exercise> exerciseList;
 	private Date exerciseDate;
 	
 	public WorkoutList() {
@@ -32,6 +32,10 @@ class WorkoutList {
 		double w = in.nextDouble();
 		exerciseDate = new Date(year,month, day);
 		setExercise();
+	}
+	public void addWorkout(Date date, Exercise ex) {
+		this.exerciseDate = date;
+		this.exerciseList.add(ex);
 	}
 	public void setExercise() {
 		Scanner in = new Scanner(System.in);

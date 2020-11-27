@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Encoding">
+  <component name="Encoding" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="UTF-8">
     <file url="file://$PROJECT_DIR$/src/GUITest/GUITest.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/GUITest/Main.java" charset="x-windows-949" />
     <file url="file://$PROJECT_DIR$/src/GUITest/WorkoutList.java" charset="EUC-KR" />
-    <file url="PROJECT" charset="x-windows-949" />
+    <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

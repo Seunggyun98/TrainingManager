@@ -1,12 +1,19 @@
 package GUITest;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
-class WorkoutGUI {
-    int id;
+public class WorkoutGUI {
+    private int id;
+    public WorkoutGUI(int id) {
+    	this.id=id;
+    	main(this.id);
+    }
     public void main(int id) {
         this.id = id;
         EventQueue.invokeLater(() -> {
@@ -22,8 +29,8 @@ class WorkoutGUI {
 
 
 class WorkoutFrame extends JFrame{
-    private static final int DEFAULT_WIDTH = 660;
-    private static final int DEFAULT_HEIGHT = 600;
+    private static final int DEFAULT_WIDTH = 1200;
+    private static final int DEFAULT_HEIGHT = 500;
     private int id;
 
     JTextField textField;
@@ -37,19 +44,28 @@ class WorkoutFrame extends JFrame{
         topPanel.add(label);
         contentPlane.add(topPanel,BorderLayout.NORTH);
 
-        Container center = new Container();
-        JPanel leftPanel = new JPanel();
-        leftPanel.setLayout(new BorderLayout());
-        textField = new JTextField("텍스트 필드");
-        leftPanel.add(textField,BorderLayout.CENTER);
-        contentPlane.add(leftPanel,BorderLayout.CENTER);
+        
+        String[] exerciseText = new String[] {"부위","이름","세트","횟수","중량","년","월","일"};
+        DefaultTableModel model = new DefaultTableModel(exerciseText,0);
+        
+        JTable table = new JTable(model);
+        JScrollPane scrollPane = new JScrollPane(table);
+        add(scrollPane,BorderLayout.CENTER);
+        contentPlane.add(scrollPane,BorderLayout.CENTER);
+        
+        //Container center = new Container();
+        //JPanel leftPanel = new JPanel();
+        //leftPanel.setLayout(new BorderLayout());
+        //textField = new JTextField("텍스트 필드");
+        //leftPanel.add(textField,BorderLayout.CENTER);
+        //contentPlane.add(leftPanel,BorderLayout.CENTER);
 
         //오른쪽 버튼 패널
         JPanel rightPanel = new JPanel();
         JPanel textPanel = new JPanel();
 
         //textPanel.setLayout(new GridLayout(5,2));
-       textPanel.setLayout(new GridLayout(10,1));
+        textPanel.setLayout(new GridLayout(10,1));
         JLabel exerciseLabel = new JLabel("운동 부위");
         JTextField exercise = new JTextField(4);
         JLabel exerciseNameLabel = new JLabel("운동 이름");
@@ -100,56 +116,143 @@ class WorkoutFrame extends JFrame{
         rightPanel.add(textPanel);
         rightPanel.add(btnPanel);
         contentPlane.add(rightPanel,BorderLayout.EAST);
-        //add(rightPanel);
-        AddExerciseAction addExerciseAction = new AddExerciseAction(exercise.getText(),exerciseName.getText(),exerciseSet.getText(),exerciseReps.getText(),exerciseWeight.getText(),exerciseDateYear.getText(),exerciseDateMonth.getText(),exerciseDateDay.getText());
-        SearchExerciseAction listExerciseAction = new SearchExerciseAction(exerciseDateYear.getText(),exerciseDateMonth.getText(),exerciseDateDay.getText());
+        
+        addExercise.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//입력된 값 회원-워크아웃리스트-해당 날짜 워크아웃-운동리스트-추가
+				//입력된 값 테이블에 출력
+				String[] rows = new String[8];
+				//문자
+				rows[0] = exercise.getText();
+				rows[1] = exerciseName.getText();
+				//숫자입력받아야함
+				rows[2] = exerciseSet.getText();
+				rows[3] = exerciseReps.getText();
+				rows[4] = exerciseWeight.getText();
+				rows[5] = exerciseDateYear.getText();
+				rows[6] = exerciseDateMonth.getText();
+				rows[7] = exerciseDateDay.getText();
+				int tag = 0;
+				for(String s : rows) {
+					if(s.length()==0) {
+						tag=1;
+						break;
+					}
+				}
+				if(tag==1) {
+					//입력안한 칸이 존재. 알림창. 모두 입력해주세요.
+					 JOptionPane.showMessageDialog(null, "빠짐없이 입력해주세요.");
+				}
+				else {
+					
+					try {
+					Exercise ex = new Exercise(exerciseName.getText(),exercise.getText(),Integer.valueOf(exerciseSet.getText()),Integer.valueOf(exerciseReps.getText()),Double.valueOf(exerciseWeight.getText()));
+					Date date = new Date(Integer.valueOf(exerciseDateYear.getText()),Integer.valueOf(exerciseDateMonth.getText()),Integer.valueOf(exerciseDateDay.getText()));
+					
+					//텍스트 필드 값 제거
+					exercise.setText("");
+					exerciseName.setText("");
+					exerciseSet.setText("");
+					exerciseReps.setText("");
+					exerciseWeight.setText("");
+					exerciseDateYear.setText("");
+					exerciseDateMonth.setText("");
+					exerciseDateDay.setText("");
+					int idx=0;
+					for(Member m : Main.memberSet) {
+						
+						if(m.getId()==id) {
+							break;
+						}
+						idx++;
+					}
+					model.addRow(rows);
+					//회원(id) - 워크아웃리스트 - 해당 날짜 워크아웃 -운동리스트의 운동 객체, 날짜객체에 날짜 추가
+					((Trainee)Main.memberSet.get(idx)).addWorkout(date,ex);
+					((Trainee)Main.memberSet.get(idx)).getWorkoutList();
+					}catch(Exception e1) {
+						JOptionPane.showMessageDialog(null, "횟수, 세트수, 중량, 날짜는 숫자로 입력해주세요");
+					}
+				}
+			}
+        	
+        });
+        
+        searchExercise.addActionListener(new ActionListener() {
 
-        addExercise.addActionListener(addExerciseAction);
-        searchExercise.addActionListener(listExerciseAction);
-
-
-
-
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				model.setNumRows(0);
+				int throwTag=0;
+				//날짜가 같은 WorkoutList에서 getExercise
+				try {
+					ArrayList<String> rows = new ArrayList<>();
+					rows.add(exerciseDateYear.getText());
+					rows.add(exerciseDateMonth.getText());
+					rows.add(exerciseDateDay.getText());
+					int tag=0;
+					for(String s : rows) {
+						if(s.length()==0) {
+							tag=1;
+							break;
+						}
+					}
+					if(tag==1) {
+						//입력안한 칸이 존재. 알림창. 모두 입력해주세요.
+						throwTag=1;
+						throw new Exception();
+					}
+					
+						Date date = new Date(Integer.valueOf(exerciseDateYear.getText()),Integer.valueOf(exerciseDateMonth.getText()),Integer.valueOf(exerciseDateDay.getText()));
+						
+			       //id회원의 workoutList의 workout 중 date가 같은 workout의 운동 리스트의 운동
+					int findID=0;
+					
+					for(Member m : Main.memberSet) {
+						
+						if(m.getId()==id) {
+							break;
+						}
+						findID++;
+					}
+					
+					
+					ArrayList<WorkoutList> list = ((Trainee)Main.memberSet.get(findID)).listOfWorkOut();
+					int idx=0;
+					for(int i = 0;i<list.size();i++) {
+						if(list.get(i).getDate().equals(date))
+							{
+								idx=i;
+								break;
+							}
+					}
+					for(int i=0; i<list.get(idx).getExerciseList().size();i++) {
+						String[] row = new String[8];
+						row[0] = list.get(idx).getExerciseList().get(i).getExName();
+						row[1] = list.get(idx).getExerciseList().get(i).getTargetMuscle();
+						row[2] = String.valueOf(list.get(idx).getExerciseList().get(i).getSet());
+						row[3] = String.valueOf(list.get(idx).getExerciseList().get(i).getReps());
+						row[4] = String.valueOf(list.get(idx).getExerciseList().get(i).getWeight());
+						row[5] = String.valueOf(date.getYear());
+						row[6] = String.valueOf(date.getMonth());
+						row[7] = String.valueOf(date.getDay());
+						model.addRow(row);
+					}
+				}catch(Exception e1) {
+					if(throwTag==1)JOptionPane.showMessageDialog(null, "날짜를 빠짐없이 입력해주세요.");
+					else {
+						JOptionPane.showMessageDialog(null, "날짜는 숫자로 입력해주세요");
+					}
+				}
+		       
+				
+			}
+        	
+        });
+        
     }
-    private class AddExerciseAction implements ActionListener{
-        String exTarget,exName;
-        int exSet,exReps;
-        Double exWeight;
-        int year,month,day;
-        public AddExerciseAction(String exTarget, String exName,String exSet,String exReps,String exWeight,String year, String month,String day){
-            this.exTarget = exTarget;
-            this.exName=exName;
-            this.exSet=Integer.valueOf(exSet);
-            this.exReps=Integer.valueOf(exReps);
-            this.exWeight=Double.valueOf(exWeight);
-            this.year = Integer.valueOf(year);
-            this.month = Integer.valueOf(month);
-            this.day=Integer.valueOf(day);
-        }
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            Date date = new Date(this.year,this.month,this.day);
-            Exercise exercise = new Exercise(exTarget,exName,Integer.valueOf(exSet),Integer.valueOf(exReps),Double.valueOf(exWeight));
-
-
-            //((Trainee)Main.memberSet.get(id))
-            //Date객체가 같은지 확인 -> 같으면 해당 workoutList의 ExercisList에 Exercise를 추가
-        }
-    }
-    private class SearchExerciseAction implements ActionListener{
-        int year,month,day;
-        public SearchExerciseAction(String year, String month,String day){
-            this.year = Integer.valueOf(year);
-            this.month = Integer.valueOf(month);
-            this.day=Integer.valueOf(day);
-        }
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            //날짜가 같은 WorkoutList에서 getExercise
-            Date date = new Date(year,month,day);
-            textField.setText(((Trainee)Main.memberSet.get(id)).getWorkoutList());
-        }
-    }
+   
 
 }
 

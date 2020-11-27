@@ -1,7 +1,7 @@
 package GUITest;
 import java.util.*;
 
- class workout {
+ class WorkoutMenu {
 
 	public void main(Member member) {
 		
@@ -55,7 +55,7 @@ import java.util.*;
 		}
 	}
 	*/
-	public workout() {
+	public WorkoutMenu() {
 		
 	}
 	

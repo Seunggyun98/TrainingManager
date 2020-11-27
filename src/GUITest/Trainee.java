@@ -12,10 +12,10 @@ class Trainee extends Member {
 		super(id, name, sex, age, type);
 	}
 	
-	public Trainee(int id, String name, String sex, int age, int type, int TrainerID, int remainPT) {
+	public Trainee(int id, String name, String sex, int age, int type, int TrainerID) {
 		super(id, name, sex, age, type);
 		this.myTrainer = TrainerID;
-		this.remainPT=remainPT;
+
 	}
 	
 	public void setRemainPT(int pt) {
@@ -48,7 +48,23 @@ class Trainee extends Member {
 	public ArrayList<WorkoutList> listOfWorkOut(){
 		return this.workoutList;
 	}
-
+	public void addWorkout(Date date,Exercise ex) {
+		 //워크아웃리스트 - 해당 날짜 워크아웃
+		int idx=0;
+		int tag = 1;
+		//System.out.println(this.workoutList.size());
+		for(WorkoutList w : workoutList) {
+			if(w.getDate().equals(date)) {
+				this.workoutList.get(idx).addExercise(ex);
+				tag=0;
+				break;
+			}
+			idx++;
+		}
+		if(tag ==1) {
+			this.workoutList.get(this.workoutList.size()).addWorkout(date,ex);
+		}
+	}
 
 
 }

@@ -9,7 +9,9 @@ class Member {
 	private int id;
 	private int type;
 
-	
+	public Member() {
+		
+	}
 	public Member(int id, String name, String sex, int age,int type ) {
 		this.name=name;
 		this.sex=sex;

@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug (Launch) - Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-Main<TraningManager>",
+            "request": "launch",
+            "mainClass": "GUITest.Main",
+            "projectName": "TraningManager"
+        },
+        {
+            "type": "java",
+            "name": "Debug (Launch)-Main<TraningManager>(1)",
+            "request": "launch",
+            "mainClass": "project.Main",
+            "projectName": "TraningManager"
+        }
+    ]
+}

@@ -1,161 +1,248 @@
 package GUITest;
 
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 
-class Register {
-	
-	public Register() {
-		
-	}
-	public boolean register(){
-		Scanner in = new Scanner(System.in);
-		int check=1;
-		int id=0; int age=0; String name=""; String sex="";int type=0;
-		int myTrainer=0;int remainPT=0;
-		while(check==1) {
-			System.out.println("회원가입");
-			System.out.print("사용할 id를 입력해주세요(4자리 숫자 : ");
-			
-			try{
-				id = in.nextInt();
-				if(id<=0||id>=10000) {
-					throw new Exception();
-				}
-				else {
-					boolean duplicateChk=duplicateCheck(id);
-					if(duplicateChk==true) {
-						System.out.println("이미 존재하는 아이디 입니다. 다시 시도해주세요.");
-						register();
-					}else {
-						in.nextLine();
-						System.out.print("이름을 입력해주세요 : ");
-						name = in.nextLine();
-						
-						int sexSelect=0;
-						while(sexSelect==0){
-							System.out.println("성별을 선택해주세요  1. 남자\t2. 여자");
-							sexSelect = in.nextInt();
-							switch(sexSelect) {
-							case 1:
-								sex = "male";
-								sexSelect = 1;
-								break;
-							case 2:
-								sex = "female";
-								sexSelect = 1;
-								break;	
-							default:
-								System.out.println("다시 시도하세요.");
-							}
-						}
-						int ageSelect = 0;
-						while(ageSelect ==0) {
-							try{
-								System.out.print("나이를 입력해주세요 :");
-								
-								age = in.nextInt();
-								if(age <=0 || age>100) {
-									throw new Exception();
-								}else {
-									ageSelect=1;
-								}
-							}catch(InputMismatchException e) {
-								System.out.println("나이는 숫자로 입력해주세요");
-							}catch(Exception e) {
-									System.out.println("나이는 1세 이상, 100세 이하 입니다. 다시 입력해주세요");
-								}
-						}
-                        int typeSelect=0;
-                        while(typeSelect==0){
-                            try{
-                                System.out.println("트레이너인지 회원인지 선택해주십시오(트레이너 : 1 / 회원 : 2) : ");
-                                type=in.nextInt();
-                                if(type!=1&&type!=2){
-                                    throw new Exception();
-                                }
-                                else{
-                                	if(type==2){   
-                                		//트레이너 선택 -> 트레이너 리스트 출력 -> 원하는 트레이너 아이디 입력
-                                            System.out.println("트레이너(아이디)를 선택해주세요. ");
-                                            //System.out.println("size : "+Main.memberSet.size());
-                                            for(Member m : Main.memberSet){
-                                                if(m.getType()==1) {
-                                                	System.out.println("트레이너 아이디 : "+m.getId()+" 이름 : "+m.getName());
-                                                }
-                                            }
-                                            System.out.print("선택입력 : ");
-                                            myTrainer = in.nextInt();
-                                            int checkTrainer=0;
-                                            for(Member m : Main.memberSet) {
-                                            	if(m.getId()==myTrainer) {
-                                            		checkTrainer=1;
-                                            		break;
-                                            	}
-                                            }
-                                            if(checkTrainer==0) {
-                                            	throw new Exception("트레이너를 잘 못 선택하셨습니다. 다시 시도해주세요.");
-                                            }
-                                            System.out.print("신청하실 PT 횟수를 적어주세요 : ");
-                                            remainPT = in.nextInt(); 
-                                        }
-                                    typeSelect=1;
-                                }
-                            }catch(InputMismatchException e) {
-								System.out.println("잘 못된 입력입니다. 다시 입력해주세요");
-                            }catch(Exception e){
-                                System.out.println("잘못 된 입력입니다. 다시 입력해주세요");
-                            }
-                        }
-						
-						System.out.println("입력된 정보");
-						
-						System.out.printf("ID : %04d, 이름 : %s, 성별 : %s, 나이 : %d, 타입 : %d\n",id,name,sex,age,type);
-						System.out.println("1. 입력된 정보로 가입\t2. 다시 입력");
-						int checkSelect=0;
-						while(checkSelect ==0) {
-							try {
-								switch(in.nextInt()) {
-									case 1:
-										checkSelect=1;
-										check=0;
-										return true;
-									
-									case 2:
-										name="";sex="";age=0;id=0;type=0;
-										checkSelect=1;
-										System.out.println("새로운 정보로 회원가입을 다시 시도합니다.");
-										in.nextLine();
-										break;
-									default:
-										throw new InputMismatchException();
-								}
-							}
-							catch(InputMismatchException e) {
-								System.out.println("다시 입력해주세요");
-							}
-						}
-					}
-				}
-				}
-				catch(Exception registerErr) {
-					System.out.println("id는 4자리 숫자입니다. 다시 시도해주세요");
-					this.register();
-				}
-			}
-		if(type ==1 ) {
-			Member member = new Trainer(id,sex,name,age,type);
-		}
-        if(type==2) {
-			Member member = new Trainee(id,sex,name,age,type,myTrainer,remainPT);
-			matchTrainer(myTrainer,(Trainee)member);
-        }
-		Member member = new Member(id,sex,name,age,type);
-		Main.memberSet.add(member);
-		return true;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
-			
+class signframe extends JFrame{
+		String signSex;
+		private void setSex(int signSex) {
+			if(signSex==1)
+			this.signSex="male";
+			else this.signSex="female";
+		}
+		private String getSex() {
+			return signSex;
+		}
+		int signType=1;
+		private void setSignType(int signType) {
+			this.signType=signType;
+		}
+		private int getSignType() {
+			return signType;
+		}
+		int duplechk=0;
+		private int getDup() {
+			return duplechk;
+		}
+		private void setDup(int duplechk) {
+			this.duplechk=duplechk;
+		}
+		int dupledid=0;
+		private void setDupid(int dupledid) {
+			this.dupledid=dupledid;
+		}
+		private int getDupid() {
+			return dupledid;
+		}
+	   public signframe()
+	   {
+		   boolean duplicateChk = false;
+	      this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	      Panel p = new Panel();
+	      Label lab1=new Label("아 이 디 : ");
+	      TextField txt1=new TextField(10);
+	      JButton duple=new JButton("중복확인");
+	      Label lab2=new Label("이 름 : ");
+	      TextField txt2=new TextField(10);
+	      Label lab3=new Label("성 별 : ");
+	      JRadioButton male = new JRadioButton("남");
+	        JRadioButton female = new JRadioButton("여");
+	        male.setSelected(true);
+	        ButtonGroup sex = new ButtonGroup();
+	        sex.add(male);
+	        sex.add(female);
+	        Label lab4=new Label("직 책 : ");
+	      JRadioButton trainer = new JRadioButton("트레이너");
+	        JRadioButton trainee = new JRadioButton("회원");
+	        trainee.setSelected(true);
+	        ButtonGroup member = new ButtonGroup();
+	        member.add(trainer);
+	        member.add(trainee);
+	        Label lab5=new Label("나 이 : ");
+	      TextField txt5=new TextField(10);
+	      JButton signin=new JButton("회원가입");
+	      p.add(lab1);
+	      p.add(txt1);
+	      p.add(duple);
+	      p.add(lab2);
+	      p.add(txt2);
+	      p.add(lab3);
+	      p.add(male);
+	      p.add(female);
+	      p.add(lab4);
+	      p.add(trainee);
+	      p.add(trainer);
+	      p.add(lab5);
+	      p.add(txt5);
+	      p.add(signin);
+	      add(p);
+	      p.setLayout(null);
+	      lab1.setBounds(30, 30, 50, 22);
+	      txt1.setBounds(100, 30, 120, 22);
+	      duple.setBounds(230, 30, 90, 30);
+	      lab2.setBounds(30, 70, 50, 22);
+	      txt2.setBounds(100, 70, 120, 22);
+	      lab3.setBounds(30, 110, 50, 22);
+	      male.setBounds(100, 110, 60, 22);
+	      female.setBounds(170, 110, 60, 22);
+	      lab4.setBounds(30, 150, 50, 22);
+	      trainer.setBounds(100, 150, 100, 22);
+	      trainee.setBounds(170, 150, 60, 22);
+	      lab5.setBounds(30, 190,50, 22);
+	      txt5.setBounds(100, 190, 120, 22);
+	      signin.setBounds(120, 240, 100, 30);
+	        setSize(400, 400);
+	        setVisible(true);
+	        int duplechecked=0;
+	        signin.addActionListener( new ActionListener() {
+	             public void actionPerformed(ActionEvent e) { 
+	                if(getDup()==0||(getDupid()!=(Integer.valueOf(txt1.getText())))) {
+	                   JOptionPane.showMessageDialog(null, "중복확인을 먼저 하셔야 합니다.");
+	                }
+	                else {
+	                	try {
+	                	int signId = getDupid();
+	                	String signName = txt2.getText();
+	                	if(male.isSelected()) setSex(1);
+	                	else setSex(2);
+	                	if(trainer.isSelected()) setSignType(1);
+	                	else setSignType(2);
+	                	int signAge=Integer.valueOf(txt5.getText());
+	                	if(getSignType()==1) {
+	                		Member member = new Trainer(signId,signName,getSex(),signAge,getSignType());
+		                	Main.memberSet.add(member);
+		                	JOptionPane.showMessageDialog(null, "회원가입에 성공하셨습니다!");
+	                		}
+	                	if(getSignType()==2) {
+	                		Trainee trainee=new Trainee(signId,signName,getSex(),signAge,getSignType());
+	                		new trainerList(trainee);
+	                		Member member = new Trainee(signId,signName,getSex(),signAge,getSignType(),trainerList.getTrainerId());
+	                		Main.memberSet.add(member);
+	                	}
+	                	setVisible(false);
+	                	}catch(Exception e1) {
+	                		JOptionPane.showMessageDialog(null, "빈칸 또는 올바르지 않은 입력이 있습니다.");
+	                	}
+	                }
+	      }
+	} );
+	        duple.addActionListener( new ActionListener() {
+	             public void actionPerformed(ActionEvent e) {
+	            	 try {
+	            		 if(Register.duplicateCheck(Integer.valueOf(txt1.getText()))==true) {
+								JOptionPane.showMessageDialog(null, "이미 존재하는 아이디 입니다. 다시 시도해주세요.");						
+								}
+							else{
+								if(txt1.getText().length()>4) {
+									JOptionPane.showMessageDialog(null, "id는 4자리 이하 숫자여야 합니다.");							
+								}
+								else 
+									{JOptionPane.showMessageDialog(null, "사용가능한 아이디입니다.");
+								setDup(1);
+								setDupid(Integer.valueOf(txt1.getText()));
+									}
+							}
+	            	 }catch(Exception e1) {
+	            		 JOptionPane.showMessageDialog(null,"숫자로 된 id를 입력해 주십시오.");
+	            	 }
+	      }
+	} );
+	   }
 	}
-	private boolean duplicateCheck(int id) {
+class trainerList extends JFrame{
+	static int trainerId=0;
+	public static int getTrainerId() {
+		return trainerId;
+	}
+	private void setTrainerId(int trainerId) {
+		this.trainerId=trainerId;
+	}
+	public trainerList(Trainee trainee) 
+	{
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setAlwaysOnTop(true);
+		setBounds(200, 100, 400, 200);
+		String[] colNames = new String[] {"Id", "Name", "Gender"};
+		DefaultTableModel model = new DefaultTableModel(colNames, 0);
+		JTable table = new JTable(model);
+		JScrollPane scrollPane = new JScrollPane(table);
+		add(scrollPane, BorderLayout.CENTER);
+		JPanel bottomPanel = new JPanel();
+		bottomPanel.setLayout(new GridLayout(2, 1));
+		JTextField trainId = new JTextField(6);
+		JButton btn = new JButton("확 인");
+		JPanel panel2 = new JPanel();
+
+		panel2.add(new JLabel("ID"));
+		panel2.add(trainId);
+		panel2.add(btn);
+		
+		bottomPanel.add(panel2);	
+		String[] arr=new String[3];
+		for(int i=0;i<Main.memberSet.size();i++) {
+			if(Main.memberSet.get(i).getType() == 1) {
+				arr[0]=Integer.toString(Main.memberSet.get(i).getId());
+				arr[1]=Main.memberSet.get(i).getName();
+				arr[2]=Main.memberSet.get(i).getSex();
+				model.addRow(arr);
+			}
+		}
+		btn.addActionListener( new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	if(trainId.getText().length()>4) {
+					JOptionPane.showMessageDialog(null, "id는 4자리 이하 숫자여야 합니다.");							
+				}
+            	else {
+            	try {
+            	for(int i=0;i<Main.memberSet.size();i++) {
+        			if(Main.memberSet.get(i).getType()==1&&Main.memberSet.get(i).getId()==Integer.valueOf(trainId.getText())) {
+        				setTrainerId(Integer.valueOf(trainId.getText()));
+        				Register.matchTrainer(getTrainerId(),trainee);
+        				break;
+        			}
+        		}
+            	}catch(Exception e1) {
+            		JOptionPane.showMessageDialog(null,"숫자로 된 id를 입력해 주십시오.");
+            	}
+            	if(getTrainerId()==0) {
+            		JOptionPane.showMessageDialog(null,"등록되지 않은 아이디 입니다.");
+            	}
+            	else {
+            		JOptionPane.showMessageDialog(null,"회원가입에 성공하셨 습니다.\n트레이너의 아이디는"+getTrainerId()+"입니다.");
+            		
+            		setVisible(false);
+            	}
+            	}
+     }
+} );
+        add(bottomPanel,BorderLayout.SOUTH);		
+		setVisible(true);
+	}
+}
+class Register {
+	public void RegisterRun() {
+		new signframe();
+	}
+	
+	static boolean duplicateCheck(int id) {
 		
 		try {
 		for(int i=0;i<Main.memberSet.size();i++) {
@@ -165,16 +252,17 @@ class Register {
 			}
 		}
 		}catch(NoSuchElementException e) {
-			System.out.println("사용할 수 있는 아이디 입니다. 입력된 아이디로 회원가입을 합니다.");
 			return false;
 		}
 		return false;
 	}
 	
-	private void matchTrainer(int trainerID, Trainee trainee) {
+	static void matchTrainer(int trainerID, Trainee trainee) {
 		for(int i =0;i<Main.memberSet.size();i++) {
 			if(Main.memberSet.get(i).getId() == trainerID) {
+				System.out.println("123123");
 				((Trainer)Main.memberSet.get(i)).addTrainee(trainee);
+				break;
 			}
 		}
 	}
