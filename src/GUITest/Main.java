@@ -51,6 +51,7 @@ public class Main {
 			}
 		}
 		
+		//5262회원에 운동 추가하고 시작
 		Member me = findById(5262);
 		Date date = new Date(2020,10,22);
 		Exercise ex = new Exercise("벤치프레스", "가슴", 5,4,75);

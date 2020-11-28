@@ -117,6 +117,7 @@ class WorkoutFrame extends JFrame{
         rightPanel.add(btnPanel);
         contentPlane.add(rightPanel,BorderLayout.EAST);
         
+        //운동 추가 버튼 action
         addExercise.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -147,31 +148,31 @@ class WorkoutFrame extends JFrame{
 				else {
 					
 					try {
-					Exercise ex = new Exercise(exerciseName.getText(),exercise.getText(),Integer.valueOf(exerciseSet.getText()),Integer.valueOf(exerciseReps.getText()),Double.valueOf(exerciseWeight.getText()));
-					Date date = new Date(Integer.valueOf(exerciseDateYear.getText()),Integer.valueOf(exerciseDateMonth.getText()),Integer.valueOf(exerciseDateDay.getText()));
-					
-					//텍스트 필드 값 제거
-					exercise.setText("");
-					exerciseName.setText("");
-					exerciseSet.setText("");
-					exerciseReps.setText("");
-					exerciseWeight.setText("");
-					exerciseDateYear.setText("");
-					exerciseDateMonth.setText("");
-					exerciseDateDay.setText("");
-					int idx=0;
-					for(Member m : Main.memberSet) {
+						Exercise ex = new Exercise(exerciseName.getText(),exercise.getText(),Integer.valueOf(exerciseSet.getText()),Integer.valueOf(exerciseReps.getText()),Double.valueOf(exerciseWeight.getText()));
+						Date date = new Date(Integer.valueOf(exerciseDateYear.getText()),Integer.valueOf(exerciseDateMonth.getText()),Integer.valueOf(exerciseDateDay.getText()));
 						
-						if(m.getId()==id) {
-							break;
+						//텍스트 필드 값 제거
+						exercise.setText("");
+						exerciseName.setText("");
+						exerciseSet.setText("");
+						exerciseReps.setText("");
+						exerciseWeight.setText("");
+						exerciseDateYear.setText("");
+						exerciseDateMonth.setText("");
+						exerciseDateDay.setText("");
+						int idx=0;
+						for(Member m : Main.memberSet) {
+							
+							if(m.getId()==id) {
+								break;
+							}
+							idx++;
 						}
-						idx++;
-					}
-					model.addRow(rows);
-					//회원(id) - 워크아웃리스트 - 해당 날짜 워크아웃 -운동리스트의 운동 객체, 날짜객체에 날짜 추가
-					((Trainee)Main.memberSet.get(idx)).addWorkout(date,ex);
-					((Trainee)Main.memberSet.get(idx)).getWorkoutList();
-					}catch(Exception e1) {
+						model.addRow(rows);
+						//회원(id) - 워크아웃리스트 - 해당 날짜 워크아웃 -운동리스트의 운동 객체, 날짜객체에 날짜 추가
+						((Trainee)Main.memberSet.get(idx)).addWorkout(date,ex);
+						((Trainee)Main.memberSet.get(idx)).getWorkoutList();
+					}catch(NumberFormatException err) {
 						JOptionPane.showMessageDialog(null, "횟수, 세트수, 중량, 날짜는 숫자로 입력해주세요");
 					}
 				}
@@ -179,6 +180,7 @@ class WorkoutFrame extends JFrame{
         	
         });
         
+        //찾기 버튼 action
         searchExercise.addActionListener(new ActionListener() {
 
 			@Override
@@ -186,67 +188,92 @@ class WorkoutFrame extends JFrame{
 				model.setNumRows(0);
 				int throwTag=0;
 				//날짜가 같은 WorkoutList에서 getExercise
+				
+				ArrayList<Integer> rows = new ArrayList<>();
+				String year = exerciseDateYear.getText();
+				String month = exerciseDateMonth.getText();
+				String day = exerciseDateDay.getText();
 				try {
-					ArrayList<String> rows = new ArrayList<>();
-					rows.add(exerciseDateYear.getText());
-					rows.add(exerciseDateMonth.getText());
-					rows.add(exerciseDateDay.getText());
-					int tag=0;
-					for(String s : rows) {
-						if(s.length()==0) {
-							tag=1;
-							break;
+				rows.add(Integer.valueOf(exerciseDateYear.getText()));
+				rows.add(Integer.valueOf(exerciseDateMonth.getText()));
+				rows.add(Integer.valueOf(exerciseDateDay.getText()));
+				int tag=0; int tag2=0;
+				
+					for(int i=0;i<3;i++) {
+						if(i==0&&(rows.get(i)>2099||rows.get(i)<1900)) {
+							tag2=1;
+							throw new Exception();
+						
+						}
+						else if(i==1&&(rows.get(i)>12||rows.get(i)<1)) {
+							tag2=1;
+							throw new Exception();
+						
+						}
+						else if(i==2&&(rows.get(i)>31||rows.get(i)<1)) {
+							tag2=1;
+							throw new Exception();
+						
+						}
+						else{
+							if(rows.get(i)==null) {
+								tag=1;
+							}
 						}
 					}
-					if(tag==1) {
-						//입력안한 칸이 존재. 알림창. 모두 입력해주세요.
-						throwTag=1;
-						throw new Exception();
-					}
 					
+					if(tag2!=1) {
 						Date date = new Date(Integer.valueOf(exerciseDateYear.getText()),Integer.valueOf(exerciseDateMonth.getText()),Integer.valueOf(exerciseDateDay.getText()));
+							
+				       //id회원의 workoutList의 workout 중 date가 같은 workout의 운동 리스트의 운동
+						int findID=0;
 						
-			       //id회원의 workoutList의 workout 중 date가 같은 workout의 운동 리스트의 운동
-					int findID=0;
-					
-					for(Member m : Main.memberSet) {
-						
-						if(m.getId()==id) {
-							break;
-						}
-						findID++;
-					}
-					
-					
-					ArrayList<WorkoutList> list = ((Trainee)Main.memberSet.get(findID)).listOfWorkOut();
-					int idx=0;
-					for(int i = 0;i<list.size();i++) {
-						if(list.get(i).getDate().equals(date))
-							{
-								idx=i;
+						for(Member m : Main.memberSet) {
+							if(m.getId()==id) {
 								break;
 							}
+							findID++;
+						}
+
+						ArrayList<WorkoutList> list = ((Trainee)Main.memberSet.get(findID)).listOfWorkOut();
+						int idx=0;
+						int searchTag=0;
+						for(int j = 0;j<list.size();j++) {
+							if(list.get(j).getDate().equals(date))
+							{
+								idx=j;
+								//System.out.println(list.get(idx).getExerciseList().size());
+								for(int i=0; i<list.get(idx).getExerciseList().size();i++) {
+									String[] row = new String[8];
+									row[0] = list.get(idx).getExerciseList().get(i).getExName();
+									row[1] = list.get(idx).getExerciseList().get(i).getTargetMuscle();
+									row[2] = String.valueOf(list.get(idx).getExerciseList().get(i).getSet());
+									row[3] = String.valueOf(list.get(idx).getExerciseList().get(i).getReps());
+									row[4] = String.valueOf(list.get(idx).getExerciseList().get(i).getWeight());
+									row[5] = String.valueOf(list.get(idx).getDate().getYear());
+									row[6] = String.valueOf(list.get(idx).getDate().getMonth());
+									row[7] = String.valueOf(list.get(idx).getDate().getDay());
+									/*for(String s:row) {
+										System.out.println(s);
+									}*/
+									model.addRow(row);
+								}
+								searchTag=1;
+								
+							}
+						}
+						if(searchTag==0) {
+							model.setNumRows(0);
+							JOptionPane.showMessageDialog(null, "해당 날짜에 운동 정보가 없습니다.");
+						}
+						
 					}
-					for(int i=0; i<list.get(idx).getExerciseList().size();i++) {
-						String[] row = new String[8];
-						row[0] = list.get(idx).getExerciseList().get(i).getExName();
-						row[1] = list.get(idx).getExerciseList().get(i).getTargetMuscle();
-						row[2] = String.valueOf(list.get(idx).getExerciseList().get(i).getSet());
-						row[3] = String.valueOf(list.get(idx).getExerciseList().get(i).getReps());
-						row[4] = String.valueOf(list.get(idx).getExerciseList().get(i).getWeight());
-						row[5] = String.valueOf(date.getYear());
-						row[6] = String.valueOf(date.getMonth());
-						row[7] = String.valueOf(date.getDay());
-						model.addRow(row);
-					}
-				}catch(Exception e1) {
-					if(throwTag==1)JOptionPane.showMessageDialog(null, "날짜를 빠짐없이 입력해주세요.");
-					else {
-						JOptionPane.showMessageDialog(null, "날짜는 숫자로 입력해주세요");
-					}
+				}catch(NumberFormatException err) {
+					JOptionPane.showMessageDialog(null, "날짜를 빈칸 없이 입력해주세요.");
 				}
-		       
-				
+				catch(Exception err) {	
+					JOptionPane.showMessageDialog(null, "날짜를 올바르게 입력해주세요.");
+				}
 			}
         	
         });

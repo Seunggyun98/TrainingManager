@@ -49,7 +49,7 @@ class Trainee extends Member {
 		return this.workoutList;
 	}
 	public void addWorkout(Date date,Exercise ex) {
-		 //워크아웃리스트 - 해당 날짜 워크아웃
+		//워크아웃리스트 - 해당 날짜 워크아웃
 		int idx=0;
 		int tag = 1;
 		//System.out.println(this.workoutList.size());
@@ -62,7 +62,8 @@ class Trainee extends Member {
 			idx++;
 		}
 		if(tag ==1) {
-			this.workoutList.get(this.workoutList.size()).addWorkout(date,ex);
+			this.workoutList.add(new WorkoutList());
+			this.workoutList.get(this.workoutList.size()-1).addWorkout(date,ex);
 		}
 	}
 
