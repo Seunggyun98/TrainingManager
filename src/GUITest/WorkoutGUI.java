@@ -6,6 +6,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class WorkoutGUI {
@@ -18,7 +19,6 @@ public class WorkoutGUI {
         this.id = id;
         EventQueue.invokeLater(() -> {
             WorkoutFrame workoutFrame = new WorkoutFrame(id);
-
             workoutFrame.setTitle("Trainning Manager");
             workoutFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             workoutFrame.setVisible(true);
@@ -107,11 +107,13 @@ class WorkoutFrame extends JFrame{
         JPanel btnPanel = new JPanel();
         JButton addExercise = new JButton("운동 추가");
         JButton searchExercise = new JButton("운동 찾기");
-
-        JPanel emptyPanel = new JPanel();
+        JButton saveExercise = new JButton("운동 저장");
+        
         btnPanel.setLayout(new FlowLayout());
         btnPanel.add(addExercise);
         btnPanel.add(searchExercise);
+        btnPanel.add(saveExercise);
+        
         rightPanel.setLayout(new GridLayout(2,2));;
         rightPanel.add(textPanel);
         rightPanel.add(btnPanel);
@@ -172,6 +174,11 @@ class WorkoutFrame extends JFrame{
 						//회원(id) - 워크아웃리스트 - 해당 날짜 워크아웃 -운동리스트의 운동 객체, 날짜객체에 날짜 추가
 						((Trainee)Main.memberSet.get(idx)).addWorkout(date,ex);
 						((Trainee)Main.memberSet.get(idx)).getWorkoutList();
+						try {
+							Database.saveWorkout();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
 					}catch(NumberFormatException err) {
 						JOptionPane.showMessageDialog(null, "횟수, 세트수, 중량, 날짜는 숫자로 입력해주세요");
 					}
@@ -266,7 +273,6 @@ class WorkoutFrame extends JFrame{
 							model.setNumRows(0);
 							JOptionPane.showMessageDialog(null, "해당 날짜에 운동 정보가 없습니다.");
 						}
-						
 					}
 				}catch(NumberFormatException err) {
 					JOptionPane.showMessageDialog(null, "날짜를 빈칸 없이 입력해주세요.");
@@ -278,6 +284,19 @@ class WorkoutFrame extends JFrame{
         	
         });
         
+        saveExercise.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					Database.saveWorkout();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+        	
+        });
+    
     }
    
 

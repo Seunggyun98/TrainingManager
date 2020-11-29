@@ -129,13 +129,21 @@ class signframe extends JFrame{
 	                	if(getSignType()==1) {
 	                		Member member = new Trainer(signId,signName,getSex(),signAge,getSignType());
 		                	Main.memberSet.add(member);
+		                	try {
+		                		Database.saveMember();
+		                	}catch(Exception err) {
+		                		System.out.println("멤버 저장 실패");
+		                	}try {
+		                	Database.saveTrainee();
+		                	}catch(Exception err) {
+		                		System.out.println("Trainee저장 실패");
+		                	}
 		                	JOptionPane.showMessageDialog(null, "회원가입에 성공하셨습니다!");
 	                		}
 	                	if(getSignType()==2) {
 	                		Trainee trainee=new Trainee(signId,signName,getSex(),signAge,getSignType());
 	                		new trainerList(trainee);
-	                		Member member = new Trainee(signId,signName,getSex(),signAge,getSignType(),trainerList.getTrainerId());
-	                		Main.memberSet.add(member);
+	                		
 	                	}
 	                	setVisible(false);
 	                	}catch(Exception e1) {
@@ -168,7 +176,7 @@ class signframe extends JFrame{
 	   }
 	}
 class trainerList extends JFrame{
-	static int trainerId=0;
+	private static int trainerId=0;
 	public static int getTrainerId() {
 		return trainerId;
 	}
@@ -216,6 +224,7 @@ class trainerList extends JFrame{
         			if(Main.memberSet.get(i).getType()==1&&Main.memberSet.get(i).getId()==Integer.valueOf(trainId.getText())) {
         				setTrainerId(Integer.valueOf(trainId.getText()));
         				Register.matchTrainer(getTrainerId(),trainee);
+        				
         				break;
         			}
         		}
@@ -226,8 +235,19 @@ class trainerList extends JFrame{
             		JOptionPane.showMessageDialog(null,"등록되지 않은 아이디 입니다.");
             	}
             	else {
+            		//trainerID.setID(getTrainerId());
             		JOptionPane.showMessageDialog(null,"회원가입에 성공하셨 습니다.\n트레이너의 아이디는"+getTrainerId()+"입니다.");
-            		
+            		trainee.setTrainer(getTrainerId());
+            		Main.memberSet.add(trainee);
+            		try {
+                		Database.saveMember();
+                	}catch(Exception err) {
+                		System.out.println("멤버 저장 실패");
+                	}try {
+                		Database.saveTrainee();
+                	}catch(Exception err) {
+                		System.out.println("Trainee저장 실패");
+                	}
             		setVisible(false);
             	}
             	}
@@ -260,10 +280,12 @@ class Register {
 	static void matchTrainer(int trainerID, Trainee trainee) {
 		for(int i =0;i<Main.memberSet.size();i++) {
 			if(Main.memberSet.get(i).getId() == trainerID) {
-				System.out.println("123123");
+				//System.out.println("123123");
 				((Trainer)Main.memberSet.get(i)).addTrainee(trainee);
 				break;
 			}
 		}
 	}
 }
+
+

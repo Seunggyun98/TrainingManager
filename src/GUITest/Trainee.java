@@ -29,6 +29,10 @@ class Trainee extends Member {
 		return myTrainer;
 	}
 	
+	public void setTrainer(int TrainerID) {
+		this.myTrainer = TrainerID;
+	}
+	
 	public void addWorkout() {
 		WorkoutList add = new WorkoutList();
 		workoutList.add(add);

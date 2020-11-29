@@ -28,34 +28,43 @@ public class Main {
 	static List<Member> memberSet = new ArrayList<>();
 	static String[][] member = new String[1000][7];
 	public static void main(String[] args) {
-		new TextField1();
-		Path path = Paths.get("src/Member.csv");
+		
+		Path path = Paths.get("src/Database/list/Member.csv");
 		File memberList = new File(path.toUri());
 		try {
 			Database.readMember(memberList);
 			System.out.println("회원 명단 불러오기 성공!");
-			System.out.println("회원 : "+memberSet.size());
+			System.out.println("회원 : "+memberSet.size()+"명");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		for(int i=0;i<memberSet.size();i++) {
 			try {
-				String id = String.valueOf(memberSet.get(i).getId())+".csv";
-				Path woPath = Paths.get("src/"+id);
-				File workout = new File(woPath.toUri());
-				Database.readWorkout(workout);
+				
+				String wname=Main.memberSet.get(i).getId()+".csv";
+				Path wpath = Paths.get("src/Database/workout/"+wname);
+				File wfile = new File(wpath.toUri());
+				Database.readWorkout(wfile);
 		
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
 		}
-		
-		//5262회원에 운동 추가하고 시작
-		Member me = findById(5262);
-		Date date = new Date(2020,10,22);
-		Exercise ex = new Exercise("벤치프레스", "가슴", 5,4,75);
-		((Trainee)me).addWorkout(date, ex);
+		for(int i =0;i<memberSet.size();i++) {
+			if(Main.memberSet.get(i).getType()==1) {
+				try {
+					String tname=Main.memberSet.get(i).getId()+".csv";
+					System.out.println(tname+" read");
+					Path tpath = Paths.get("src/Database/traineeList/"+tname);
+					File tfile = new File(tpath.toUri());
+					Database.readTrainee(tfile);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		new TextField1();
 		
 	}
 	
