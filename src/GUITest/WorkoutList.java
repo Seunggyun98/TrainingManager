@@ -18,6 +18,12 @@ class WorkoutList {
 		this.exerciseDate =  new Date(dy,dm,dd);
 	}
 	
+	public void deleteWorkout() {
+		this.exerciseList = null;
+		this.exerciseDate = null;
+	}
+	
+	
 	public void addExercise(Exercise exercise) {
 		exerciseList.add(exercise);
 	}

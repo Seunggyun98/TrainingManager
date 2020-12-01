@@ -108,11 +108,14 @@ class WorkoutFrame extends JFrame{
         JButton addExercise = new JButton("운동 추가");
         JButton searchExercise = new JButton("운동 찾기");
         JButton saveExercise = new JButton("운동 저장");
+        JButton deleteExercise = new JButton("워크아웃 삭제");
+        
         
         btnPanel.setLayout(new FlowLayout());
         btnPanel.add(addExercise);
         btnPanel.add(searchExercise);
         btnPanel.add(saveExercise);
+        btnPanel.add(deleteExercise);
         
         rightPanel.setLayout(new GridLayout(2,2));;
         rightPanel.add(textPanel);
@@ -290,10 +293,93 @@ class WorkoutFrame extends JFrame{
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					Database.saveWorkout();
+					JOptionPane.showMessageDialog(null, "워크아웃이 저장되었습니다.");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
+        	
+        });
+    
+    
+        deleteExercise.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ArrayList<Integer> rows = new ArrayList<>();
+				String year = exerciseDateYear.getText();
+				String month = exerciseDateMonth.getText();
+				String day = exerciseDateDay.getText();
+				try {
+				rows.add(Integer.valueOf(exerciseDateYear.getText()));
+				rows.add(Integer.valueOf(exerciseDateMonth.getText()));
+				rows.add(Integer.valueOf(exerciseDateDay.getText()));
+				int tag=0; int tag2=0;
+				
+					for(int i=0;i<3;i++) {
+						if(i==0&&(rows.get(i)>2099||rows.get(i)<1900)) {
+							tag2=1;
+							throw new Exception();
+						
+						}
+						else if(i==1&&(rows.get(i)>12||rows.get(i)<1)) {
+							tag2=1;
+							throw new Exception();
+						
+						}
+						else if(i==2&&(rows.get(i)>31||rows.get(i)<1)) {
+							tag2=1;
+							throw new Exception();
+						
+						}
+						else{
+							if(rows.get(i)==null) {
+								tag=1;
+							}
+						}
+					}
+					
+					if(tag2!=1) {
+						Date date = new Date(Integer.valueOf(exerciseDateYear.getText()),Integer.valueOf(exerciseDateMonth.getText()),Integer.valueOf(exerciseDateDay.getText()));
+							
+				       //id회원의 workoutList의 workout 중 date가 같은 workout의 운동 리스트의 운동
+						int findID=0;
+						
+						for(Member m : Main.memberSet) {
+							if(m.getId()==id) {
+								break;
+							}
+							findID++;
+						}
+
+						ArrayList<WorkoutList> list = ((Trainee)Main.memberSet.get(findID)).listOfWorkOut();
+						int idx=0;
+						int searchTag=0;
+						for(int j = 0;j<list.size();j++) {
+							if(list.get(j).getDate().equals(date))
+							{
+								list.get(j).deleteWorkout();
+								JOptionPane.showMessageDialog(null, "해당 날짜의 워크아웃이 삭제되었습니다."
+										+ " 저장 버튼을 꼭 눌러주세요!");
+								model.setNumRows(0);
+								searchTag=1;
+								
+							}
+						}
+						if(searchTag==0) {
+							model.setNumRows(0);
+							JOptionPane.showMessageDialog(null, "해당 날짜에 운동 정보가 없습니다.");
+						}
+					}
+				}catch(NumberFormatException err) {
+					JOptionPane.showMessageDialog(null, "날짜를 빈칸 없이 입력해주세요.");
+				}
+				catch(Exception err) {	
+					JOptionPane.showMessageDialog(null, "날짜를 올바르게 입력해주세요.");
+				}
+				
+			}
+        	
         	
         });
     

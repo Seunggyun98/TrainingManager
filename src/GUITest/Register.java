@@ -144,6 +144,9 @@ class signframe extends JFrame{
 	                		Trainee trainee=new Trainee(signId,signName,getSex(),signAge,getSignType());
 	                		new trainerList(trainee);
 	                		
+	                		
+	                		
+	                		
 	                	}
 	                	setVisible(false);
 	                	}catch(Exception e1) {

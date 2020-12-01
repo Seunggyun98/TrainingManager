@@ -70,6 +70,14 @@ class Trainee extends Member {
 			this.workoutList.get(this.workoutList.size()-1).addWorkout(date,ex);
 		}
 	}
-
+	
+	public void deleteWorkout(Date date) {
+		for(int i =0;i<workoutList.size();i++) {
+			if(workoutList.get(i).getDate().equals(date)) {
+				workoutList.get(i).deleteWorkout();
+				break;
+			}
+		}
+	}
 
 }
