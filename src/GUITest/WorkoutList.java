@@ -18,12 +18,6 @@ class WorkoutList {
 		this.exerciseDate =  new Date(dy,dm,dd);
 	}
 	
-	public void deleteWorkout() {
-		this.exerciseList = null;
-		this.exerciseDate = null;
-	}
-	
-	
 	public void addExercise(Exercise exercise) {
 		exerciseList.add(exercise);
 	}
@@ -32,19 +26,6 @@ class WorkoutList {
 	public void addWorkout(Date date, Exercise ex) {
 		this.exerciseDate = date;
 		this.exerciseList.add(ex);
-	}
-	
-	
-	public String getExercise() {
-		String ex = new String();
-		System.out.println("날짜 : "+this.exerciseDate.toString());
-		ex+="날짜 : "+this.exerciseDate.toString()+"\n";
-		System.out.println("----------------------루틴-------------------------");
-		for(Exercise e : exerciseList) {
-			System.out.println(e.getTargetMuscle()+" "+e.getExName()+" "+e.getSet()+"세트 "+e.getReps()+"회 "+e.getWeight()+"kg");
-			ex +=e.getTargetMuscle()+" "+e.getExName()+" "+e.getSet()+"세트 "+e.getReps()+"회 "+e.getWeight()+"kg"+"\n";
-		}
-		return ex;
 	}
 	
 	public Date getDate() {

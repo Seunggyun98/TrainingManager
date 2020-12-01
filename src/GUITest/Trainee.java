@@ -41,14 +41,14 @@ class Trainee extends Member {
 	public void loadWorkout(WorkoutList add) {
 		this.workoutList.add(add);
 	}
-	
+	/*
 	public String getWorkoutList(){
 		WorkoutList wlist = new WorkoutList(0,0,0);
 		for(WorkoutList wl : workoutList) {
 			wlist = wl;
 		}
 		return wlist.getExercise();
-	}
+	}*/
 	public ArrayList<WorkoutList> listOfWorkOut(){
 		return this.workoutList;
 	}
@@ -71,13 +71,5 @@ class Trainee extends Member {
 		}
 	}
 	
-	public void deleteWorkout(Date date) {
-		for(int i =0;i<workoutList.size();i++) {
-			if(workoutList.get(i).getDate().equals(date)) {
-				workoutList.get(i).deleteWorkout();
-				break;
-			}
-		}
-	}
 
 }

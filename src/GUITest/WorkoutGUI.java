@@ -176,7 +176,7 @@ class WorkoutFrame extends JFrame{
 						model.addRow(rows);
 						//회원(id) - 워크아웃리스트 - 해당 날짜 워크아웃 -운동리스트의 운동 객체, 날짜객체에 날짜 추가
 						((Trainee)Main.memberSet.get(idx)).addWorkout(date,ex);
-						((Trainee)Main.memberSet.get(idx)).getWorkoutList();
+						//((Trainee)Main.memberSet.get(idx)).getWorkoutList();
 						try {
 							Database.saveWorkout();
 						} catch (IOException e1) {
@@ -358,7 +358,7 @@ class WorkoutFrame extends JFrame{
 						for(int j = 0;j<list.size();j++) {
 							if(list.get(j).getDate().equals(date))
 							{
-								list.get(j).deleteWorkout();
+								list.remove(j);
 								JOptionPane.showMessageDialog(null, "해당 날짜의 워크아웃이 삭제되었습니다."
 										+ " 저장 버튼을 꼭 눌러주세요!");
 								model.setNumRows(0);

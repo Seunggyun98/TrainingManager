@@ -65,15 +65,19 @@ public class Database {
 				//다음줄부터 (운동개수\n날짜\n운동리스트\n)입력
 				ArrayList<WorkoutList> workoutList = ((Trainee)Main.memberSet.get(i)).listOfWorkOut();
 				for(WorkoutList wl : workoutList) {
-					Date wlDate = wl.getDate();
-					ArrayList<Exercise> wlExList = wl.getExerciseList();
-					bw.write(String.valueOf(wlExList.size()));
-					bw.newLine();
-					bw.write(wlDate.getYear()+","+wlDate.getMonth()+","+wlDate.getDay()+",");
-					bw.newLine();
-					for(Exercise ex : wlExList) {
-						bw.write(ex.getExName()+","+ex.getTargetMuscle()+","+ex.getReps()+","+ex.getSet()+","+ex.getWeight());
+					try {
+						Date wlDate = wl.getDate();
+						ArrayList<Exercise> wlExList = wl.getExerciseList();
+						bw.write(String.valueOf(wlExList.size()));
 						bw.newLine();
+						bw.write(wlDate.getYear()+","+wlDate.getMonth()+","+wlDate.getDay()+",");
+						bw.newLine();
+						for(Exercise ex : wlExList) {
+							bw.write(ex.getExName()+","+ex.getTargetMuscle()+","+ex.getReps()+","+ex.getSet()+","+ex.getWeight());
+							bw.newLine();
+						}
+					}catch(NullPointerException err) {
+						continue;
 					}
 				}
 				bw.close();
