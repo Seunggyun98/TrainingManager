@@ -13,12 +13,22 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+
+/**
+ * 프로그램을 종료하고 재실행 하였을 때 정보들을 저장하고 불러오는 작업을 하는 클래스
+ * @author 승균
+ *
+ */
 public class Database {
-	public Database() {
-		
-	}
+	
+	/**
+	 * 회원과 트레이너를 담고있는 {@code memberSet}의 정보를 csv파일로 저장한다.
+	 * 파일 명은 Member.csv이고, 저장 위치는 TrainingManager/src/Database/list 이다.
+	 * @throws IOException
+	 */
 	public static void saveMember() throws IOException {
 		String fname="Member.csv";
 		Path path = Paths.get("src/Database/list/"+fname);
@@ -37,14 +47,14 @@ public class Database {
 				bw.newLine();
 			}
 		}
-		System.out.println("-------------------");
-		System.out.println("Member Save Complete");
-		System.out.println("-------------------");
-		bw.close();
-		
+		bw.close();	
 	}
 	
-	
+	/**
+	 * 각 회원들의 워크아웃 정보를 저장하는 메소드
+	 * 파일명은 아이디.csv, 저장 위치는 TrainingManager/src/Database/workout
+	 * @throws IOException
+	 */
 	public static void saveWorkout() throws IOException {
 		
 		for(int i = 0; i<Main.memberSet.size();i++) {
@@ -85,6 +95,11 @@ public class Database {
 		}
 	}
 	
+	/**
+	 * 각 트레이너들이 담당하는 회원목록을 저장한다.
+	 * 파일 이름은 트레이너 아이디.csv, 경로는 TrainingManager/src/Database/traineeList/
+	 * @throws Exception
+	 */
 	public static void saveTrainee() throws Exception{
 		
 		for(int i = 0; i<Main.memberSet.size();i++) {
@@ -93,7 +108,6 @@ public class Database {
 				//파일명 :  회원아이디.csv
 				
 				String fname=Main.memberSet.get(i).getId()+".csv";
-				System.out.println("회원 저장 완료");
 				Path path = Paths.get("src/Database/traineeList/"+fname);
 				File file = new File(path.toUri());
 				//파일 출력 한글 인코딩 
@@ -112,13 +126,19 @@ public class Database {
 				bw.close();
 			}
 		}
+		
 	}
 	
-	public static void readTrainee(File file) {
+	/**
+	 * 저장되어있는 각 트레이너의 회원 목록파일을 불러와 트레이너 객체에 저장한다.
+	 * @param file 각 트레이너 아이디로 생성되어있는 CSV파일
+	 */
+	public static void readTrainee(File file){
 		try {
 			Scanner sc = new Scanner(file);
-			//첫줄은 트레이너 아이디
-			int id = Integer.valueOf(sc.nextLine().split(",")[0]);
+		//첫줄은 트레이너 아이디
+		int id = Integer.valueOf(sc.nextLine().split(",")[0]);
+		
 			//id를 가진 member index찾기
 			int idx=-1;
 			for(int i =0;i<Main.memberSet.size();i++) {
@@ -135,15 +155,21 @@ public class Database {
 				int traineeAge=Integer.valueOf(temp[3]);
 				int type = Integer.valueOf(temp[4]);
 				Trainee trainee = new Trainee(traineeID,traineeName,traineeSex,traineeAge,type);
-				((Trainer)Main.memberSet.get(idx)).addTrainee(trainee);;
+				((Trainer)Main.memberSet.get(idx)).addTrainee(trainee);
 			}
+		}catch(NoSuchElementException err) {
+			
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+		
 		}
-		
-		
 	}
 	
+	
+	/**
+	 * 프로그램 실행 시 회원 목록파일을 읽어와 {@code memberSet}에 저장한다.
+	 * @param file
+	 * @throws Exception
+	 */
 	public static void readMember(File file) throws Exception {
 		try {
 			BufferedReader br =null;
@@ -160,7 +186,6 @@ public class Database {
 				int fAge=0;
 				String fSex="";
 				int fTrainer=0;
-				int fRemainPT=0;
 				for(int i=0;i<tmp.size();i++) {
 						switch(i) {
 							case 0:
@@ -182,12 +207,7 @@ public class Database {
 								if(fType==1) break;
 								fTrainer = Integer.valueOf(tmp.get(i));
 								break;
-							case 6:
-								if(fType==1) break;
-								fRemainPT = Integer.valueOf(tmp.get(i));
-								break;
 						}
-					
 				}
 				if(fType ==1 ) {
 					Main.memberSet.add(new Trainer(fId,fName,fSex,fAge,1));		
@@ -197,16 +217,18 @@ public class Database {
 			}
 	
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			throw new Exception("회원 명단 불러오기를 실패하였습니다.");		
 		}
 	}
 	
-	
+	/**
+	 * 각 회원들의 워크아웃 파일을 읽어와 회원의 워크아웃리스트에 저장한다.
+	 * @param file 회원아이디.csv 파일
+	 * @throws Exception
+	 */
 	public static void readWorkout(File file) throws Exception {
 		try {
 			Scanner sc = new Scanner(file);
-			
 			String temp;
 			String[] splited;
 			
@@ -226,7 +248,6 @@ public class Database {
 				splited = sc.nextLine().split(",");
 				Date date = new Date(Integer.valueOf(splited[0]),Integer.valueOf(splited[1]),Integer.valueOf(splited[2]));
 			    //id회원의 workoutList의 workout 중 date가 같은 workout의 운동 리스트의 운동
-				ArrayList<WorkoutList> list = (((Trainee)Main.memberSet.get(idx))).listOfWorkOut();
 				
 				for(int i=0;i<exSize;i++) {
 					Exercise tExercise;
@@ -264,10 +285,5 @@ public class Database {
 			}
 		}catch(Exception e ) {
 		}
-		
 	}
-
-
-	
-	
 }

@@ -5,7 +5,13 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-class WorkoutList {
+
+/**
+ * 각 회원이 가지고 있는 워크아웃 리스트를 저장하는 클래스
+ * @author 승균
+ *
+ */
+class WorkoutList implements Comparable<WorkoutList>{
 	private ArrayList<Exercise> exerciseList;
 	private Date exerciseDate;
 	
@@ -21,7 +27,6 @@ class WorkoutList {
 	public void addExercise(Exercise exercise) {
 		exerciseList.add(exercise);
 	}
-	
 	
 	public void addWorkout(Date date, Exercise ex) {
 		this.exerciseDate = date;
@@ -41,30 +46,49 @@ class WorkoutList {
 	public void setExerciseList(ArrayList<Exercise> exList) {
 		this.exerciseList = exList;
 	}
-	
 
+
+	@Override
+	public int compareTo(WorkoutList w) {
+		return this.exerciseDate.compareTo(w.exerciseDate);
+	}
 }
 
-class Date{
+
+/**
+ * 날짜를 저장하는 클래스
+ * @author 승균
+ *
+ */
+class Date implements Comparable<Date>{
+	//년도
 	private int year;
+	//달
 	private int month;
+	//일
 	private int day;
+	
 	public Date() {};
+	
 	public Date(int year, int month, int day) {
 		this.year=year;
 		this.month=month;
 		this.day=day;
 	}
 
-
-	public boolean equals(Date date){
-		return date.getYear() == this.year && date.getMonth() == this.month && date.getDay() == this.day;
-	}
-
+	/**
+	 * 날짜를 비교하기위한 메서드
+	 */
 	@Override
-	public String toString() {
-		return this.year+"/"+this.month+"/"+this.day;
+	public boolean equals(Object otherObject){
+		if(this==otherObject) return true;
+		if(otherObject==null) return false;
+		if(getClass()!=otherObject.getClass()) return false;
+		
+		Date other = (Date)otherObject;
+		return other.getYear() == this.year && other.getMonth() == this.month && other.getDay() == this.day;
 	}
+
 	public int getYear(){
 		return this.year;
 	}
@@ -73,5 +97,25 @@ class Date{
 	}
 	public int getDay(){
 		return this.day;
+	}
+	
+	
+	/**
+	 * Comparable 인터페이스의 메서드를 오버라이드
+	 * 날짜를 기준으로 워크아웃을 정렬하기 위함 
+	 */
+	@Override
+	public int compareTo(Date other) {
+		if(this.year<other.year) return -1;
+		else if(this.year>other.year) return 1;
+		else {
+			if(this.month<other.month) return -1;
+			else if (this.month>other.month) return 1;
+			else {
+				if(this.day<other.day) return -1;
+				else if(this.day>other.day) return 1;
+				else return 0;
+			}
+		}	
 	}
 }

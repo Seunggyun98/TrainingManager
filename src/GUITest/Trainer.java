@@ -2,6 +2,7 @@ package GUITest;
 
 import java.util.*;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.Panel;
@@ -58,6 +59,27 @@ class TrainerGUI extends JFrame{
 			JTable table = new JTable(model);
 			JScrollPane scrollPane = new JScrollPane(table);
 			add(scrollPane, BorderLayout.CENTER);	
+			
+			JPanel btnPanel = new JPanel();
+			btnPanel.setLayout(new FlowLayout());
+			JButton btnSelect = new JButton("선택");
+			btnPanel.add(btnSelect);
+			add(btnPanel,BorderLayout.SOUTH);
+			btnSelect.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					int row = table.getSelectedRow();
+					int selectID = Integer.valueOf((String) table.getModel().getValueAt(row,0));
+					String selectName = (String) table.getModel().getValueAt(row,1);
+					JOptionPane.showMessageDialog(null,selectName+"님의 워크아웃 정보를 확인합니다.");
+					new WorkoutGUI(selectID);
+					setVisible(false);
+				}
+				
+			});
+	
+			
 			String[] arr=new String[4];
 			
 			for(int i=0;i<Main.memberSet.size();i++) {
@@ -76,12 +98,25 @@ class TrainerGUI extends JFrame{
 					arr[2]=getTraineeList().get(i).getSex();
 					arr[3]=Integer.toString(getTraineeList().get(i).getAge());
 					model.addRow(arr);
-			}
+				}
 				setVisible(true);
 			}
+			
+			
+			
+			
 	}
+		
+		
+		
 }
 
+
+/**
+ * 트레이너의 정보를 담는 클래스
+ * @author 승균
+ *
+ */
 class Trainer extends Member{
 	private ArrayList<Trainee> traineeList = new ArrayList<>();
 	private int traineeNum = traineeList.size();
@@ -123,14 +158,5 @@ class Trainer extends Member{
 		return null;
 	}
 	
-	public void addWorkout() {
-		Scanner in = new Scanner(System.in);
-		System.out.println("담당 회원 목록");
-		this.getTraineeList();
-		System.out.println();
-		System.out.print("회원을 선택해주세요. ID : ");
-		Trainee trainee = getTrainee(in.nextInt());
-		//memberSet에서 접근해야함.
-		trainee.addWorkout();
-	}
+
 }

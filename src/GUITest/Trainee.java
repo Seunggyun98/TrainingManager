@@ -1,11 +1,16 @@
 package GUITest;
-import java.time.LocalDate;
+
 import java.util.*;
 
-class Trainee extends Member {
 
-	private int myTrainer; //trainer id를 담고있음
-	private int remainPT; 
+/**
+ * 회원들의 정보를 담는 클래스
+ * @author 승균
+ *
+ */
+class Trainee extends Member {
+	//trainer id
+	private int myTrainer; 
 	private ArrayList<WorkoutList> workoutList = new ArrayList<>();
 	
 	public Trainee(int id, String name, String sex, int age, int type) {
@@ -18,13 +23,6 @@ class Trainee extends Member {
 
 	}
 	
-	public void setRemainPT(int pt) {
-		this.remainPT = pt;
-	}
-	public void minusPT() {
-		this.remainPT = this.remainPT -1;
-	}
-	
 	public int getTrainer() {
 		return myTrainer;
 	}
@@ -32,31 +30,25 @@ class Trainee extends Member {
 	public void setTrainer(int TrainerID) {
 		this.myTrainer = TrainerID;
 	}
-	
-	public void addWorkout() {
-		WorkoutList add = new WorkoutList();
-		workoutList.add(add);
-	}
-	
+
 	public void loadWorkout(WorkoutList add) {
 		this.workoutList.add(add);
 	}
-	/*
-	public String getWorkoutList(){
-		WorkoutList wlist = new WorkoutList(0,0,0);
-		for(WorkoutList wl : workoutList) {
-			wlist = wl;
-		}
-		return wlist.getExercise();
-	}*/
+	
 	public ArrayList<WorkoutList> listOfWorkOut(){
 		return this.workoutList;
 	}
+	
+	/**
+	 * 입력한 날짜의 운동을 추가하는 메서드
+	 * 해당 날짜에 이미 워크아웃이 존재한다면 해당 워크아웃에 추가한다. 워크아웃이 존재하지 않는다면 {@code WorkoutList}객체를 만들어 저장한다.
+	 * @param date 운동 날짜
+	 * @param ex 추가할 운동
+	 */
 	public void addWorkout(Date date,Exercise ex) {
-		//워크아웃리스트 - 해당 날짜 워크아웃
 		int idx=0;
 		int tag = 1;
-		//System.out.println(this.workoutList.size());
+		
 		for(WorkoutList w : workoutList) {
 			if(w.getDate().equals(date)) {
 				this.workoutList.get(idx).addExercise(ex);
@@ -65,6 +57,7 @@ class Trainee extends Member {
 			}
 			idx++;
 		}
+		//해당 날짜의 워크아웃이 없으면 워크아웃리스트 객체를 새로 생성하여 추가한다.
 		if(tag ==1) {
 			this.workoutList.add(new WorkoutList());
 			this.workoutList.get(this.workoutList.size()-1).addWorkout(date,ex);

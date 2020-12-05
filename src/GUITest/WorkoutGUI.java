@@ -6,39 +6,67 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
-public class WorkoutGUI {
+
+/**
+ * GUI class for WORKOUT PAGE
+ * @author 승균
+ *
+ */
+class WorkoutGUI {
     private int id;
+    /**
+     * @param id the id of the user who logged in
+     */
     public WorkoutGUI(int id) {
        this.id=id;
-       main(this.id);
+       gui();
     }
-    public void main(int id) {
-        this.id = id;
+    
+    /**
+     * WORKOUT PAGE를 띄워준다.
+     */
+    public void gui() {
         EventQueue.invokeLater(() -> {
-            WorkoutFrame workoutFrame = new WorkoutFrame(id);
-            workoutFrame.setTitle("Trainning Manager");
+            WorkoutFrame workoutFrame = new WorkoutFrame(this.id);
             workoutFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             workoutFrame.setVisible(true);
 
         });
     }
 }
-class DateSelect extends JFrame{
 
-   Date selectedDate;
-   String[] colNames = new String[] {"Year", "Month", "Day"};
-   DefaultTableModel model = new DefaultTableModel(colNames, 0){
-      public boolean isCellEditable(int i, int c){ return false; }
-   };
+/**
+ * 운동 찾기 버튼을 눌렀을 때 날짜별로 운동 목록을 보여주는 GUI
+ * @author 태홍, 승균
+ *
+ */
+class DateSelect extends JFrame{
+	//목록에서 선택한 워크아웃의 날짜
+	Date selectedDate;
+	String[] colNames = new String[] {"Year", "Month", "Day"};
+	DefaultTableModel model = new DefaultTableModel(colNames, 0){
+		public boolean isCellEditable(int i, int c)
+		{ 
+			return false; 
+		}
+	};
    JTable table = new JTable(model);
    JScrollPane scrollPane = new JScrollPane(table);
+   
+   /**
+    * 날짜 별로 워크아웃을 선택할 수 있는 목록을 띄워주는 GUI 
+    * @param id 로그인 한 유저의 ID
+    */
    public DateSelect(int id) {
+	   setTitle("Training Manager");
       ArrayList<WorkoutList> workoutlist = null;
+   
       setDefaultCloseOperation(EXIT_ON_CLOSE);
       setAlwaysOnTop(true);
       setBounds(400, 200, 500, 300);
@@ -50,9 +78,12 @@ class DateSelect extends JFrame{
       panel.add(add);
       add(scrollPane, BorderLayout.CENTER);
       //add(panel);
+      
+      //워크아웃 리스트를 날짜를 기준으로 정렬하여 보여준다.
       for(int i=0;i<Main.memberSet.size();i++) {
          if(Main.memberSet.get(i).getId()==id) {
             workoutlist = ((Trainee)Main.memberSet.get(i)).listOfWorkOut();
+            Collections.sort(workoutlist);
             break;
          }
       }
@@ -61,22 +92,22 @@ class DateSelect extends JFrame{
          JOptionPane.showMessageDialog(null,"운동리스트가 아직 없습니다.");
       }
       else {
-      for(int i=0;i<workoutlist.size();i++) {
-         Date date=workoutlist.get(i).getDate();
-         row[0]=Integer.toString(date.getYear());
-         row[1]=Integer.toString(date.getMonth());
-         row[2]=Integer.toString(date.getDay());
-         model.addRow(row);
-         }
-
-      add(panel,BorderLayout.SOUTH);
-      setVisible(true);
-
+	      for(int i=0;i<workoutlist.size();i++) {
+	         Date date=workoutlist.get(i).getDate();
+	         row[0]=Integer.toString(date.getYear());
+	         row[1]=Integer.toString(date.getMonth());
+	         row[2]=Integer.toString(date.getDay());
+	         model.addRow(row);
+	      }
+	      add(panel,BorderLayout.SOUTH);
+	      setVisible(true);
       }
+     
       add.addActionListener(new ActionListener(){
          @Override
          public void actionPerformed(ActionEvent e) {
             WorkoutFrame.model.setNumRows(0);
+            try {
             int row = table.getSelectedRow();
             Date date=new Date(Integer.valueOf((String) table.getModel().getValueAt(row,0)),Integer.valueOf((String)table.getModel().getValueAt(row,1)),Integer.valueOf((String)table.getModel().getValueAt(row,2)));
             int findID=0;
@@ -106,9 +137,7 @@ class DateSelect extends JFrame{
                      row1[5] = String.valueOf(list.get(idx).getDate().getYear());
                      row1[6] = String.valueOf(list.get(idx).getDate().getMonth());
                      row1[7] = String.valueOf(list.get(idx).getDate().getDay());
-                     /*for(String s:row) {
-                        System.out.println(s);
-                     }*/
+                   
                      WorkoutFrame.model.addRow(row1);
                   }
                   searchTag=1;
@@ -120,14 +149,24 @@ class DateSelect extends JFrame{
                JOptionPane.showMessageDialog(null, "해당 날짜에 운동 정보가 없습니다.");
             }
             setVisible(false);
+	         }catch(ArrayIndexOutOfBoundsException err) {
+	         	JOptionPane.showMessageDialog(null, "날짜를 선택해주세요.");
+	         } 
+
          }      
        });
+      } 
+
    }
    
-}
 
+/**
+ * WORKOUT PAGE를 구현한 GUI 클래스
+ * @author 승균
+ *
+ */
 class WorkoutFrame extends JFrame{
-
+	
     static String[] exerciseText = new String[] {"부위","이름","세트","횟수","중량","년","월","일"};
     static DefaultTableModel model = new DefaultTableModel(exerciseText,0);
     private static final int DEFAULT_WIDTH = 1200;
@@ -139,14 +178,54 @@ class WorkoutFrame extends JFrame{
     static JTextField exerciseDateDay = new JTextField(2);
 
    
-   
+   /**
+    * 실제 UI 컴포넌트들과 Action들이 구현되어있는 생성자
+    * @param id 로그인 한 유저의 ID
+    */
     public WorkoutFrame(int id){
+    	setTitle("Training Manager");
         setSize(DEFAULT_WIDTH,DEFAULT_HEIGHT);
+
         //setResizable(false);
+        
+        //상단 메뉴바
+        JMenuBar menuBar = new JMenuBar();
+        setJMenuBar(menuBar);
+        //상단 메뉴바의 메뉴 버튼
+        JMenu menu = new JMenu("메뉴");
+        menuBar.add(menu);
+        //메뉴의 종료 버튼
+        JMenuItem exit = new JMenuItem("종료");
+        //종료버튼 ActionListenr
+        exit.addActionListener(event->System.exit(0));
+        
+        //메뉴의 로그아웃 버튼
+        JMenuItem logout = new JMenuItem("로그아웃");
+        //로그아웃 버튼 ActionListener
+        logout.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				setVisible(false);
+				new TextField1();
+			}
+        	
+        });
+        
+        menu.add(logout);
+        menu.addSeparator();
+        menu.add(exit);
+        
+        
         this.id=id;
+        String name = null;
+        for(Member m : Main.memberSet) {
+        	if(m.getId()==id) {
+        		name = m.getName();
+        	}
+        }
         Container contentPlane = this.getContentPane();
         JPanel topPanel = new JPanel();
-        JLabel label = new JLabel("WORKOUT PAGE");
+        JLabel label = new JLabel(name+"님의 WORKOUT PAGE");
         topPanel.add(label);
         contentPlane.add(topPanel,BorderLayout.NORTH);
 
@@ -160,24 +239,37 @@ class WorkoutFrame extends JFrame{
 
         //오른쪽 버튼 패널
         JPanel rightPanel = new JPanel();
+        //운동 정보를 입력하는 텍스트필드를 가진 텍스트패널
         JPanel textPanel = new JPanel();
 
         textPanel.setLayout(new GridLayout(10,1));
+        
         JLabel exerciseLabel = new JLabel("운동 부위");
+        //운동 부위를 입력하는 텍스트 필드
         JTextField exercise = new JTextField(4);
+        
         JLabel exerciseNameLabel = new JLabel("운동 이름");
+        //운동 이름을 입력하는 텍스트 필드
         JTextField exerciseName = new JTextField(4);
-        JLabel exerciseSetLabel = new JLabel("세트");
+       
+        JLabel exerciseSetLabel = new JLabel("세트"); 
+        //세트 수를 입력하는 텍스트 필드
         JTextField exerciseSet = new JTextField(4);
+        
         JLabel exerciseRepsLabel = new JLabel("횟수");
+        //횟수를 입력하는 텍스트 필드
         JTextField exerciseReps = new JTextField(4);
+        
         JLabel exerciseWeightLabel = new JLabel("중량");
+        //중량을 입력하는 텍스트 필드
         JTextField exerciseWeight = new JTextField(4);
         JLabel exerciseDateLabel = new JLabel("날짜");
         JLabel exerciseDateYearLabel = new JLabel("년");
         JLabel exerciseDateMonthLabel = new JLabel("월");
         JLabel exerciseDateDayLabel = new JLabel("일");
-
+        
+        
+        //날짜를 입력하는 텍스트필드를 가지는 패널
         JPanel datePanel = new JPanel();
 
         datePanel.add(exerciseDateYear);
@@ -244,14 +336,14 @@ class WorkoutFrame extends JFrame{
                }
             }
             if(tag==1) {
-               //입력안한 칸이 존재. 알림창. 모두 입력해주세요.
+               //입력안한 칸이 존재했을 때 경고창.
                 JOptionPane.showMessageDialog(null, "빠짐없이 입력해주세요.");
             }
             else {
                
                try {
-                  Exercise ex = new Exercise(exerciseName.getText(),exercise.getText(),Integer.valueOf(exerciseSet.getText()),Integer.valueOf(exerciseReps.getText()),Double.valueOf(exerciseWeight.getText()));
-                  Date date = new Date(Integer.valueOf(exerciseDateYear.getText()),Integer.valueOf(exerciseDateMonth.getText()),Integer.valueOf(exerciseDateDay.getText()));
+                  Exercise ex = new Exercise(rows[1],rows[0],Integer.valueOf(rows[2]),Integer.valueOf(rows[3]),Double.valueOf(rows[4]));
+                  Date date = new Date(Integer.valueOf(rows[5]),Integer.valueOf(rows[6]),Integer.valueOf(rows[7]));
                   
                   //텍스트 필드 값 제거
                   exercise.setText("");
@@ -262,8 +354,7 @@ class WorkoutFrame extends JFrame{
                   exerciseDateYear.setText("");
                   exerciseDateMonth.setText("");
                   exerciseDateDay.setText("");
-                  
-                  
+
                   int idx=0;
                   for(Member m : Main.memberSet) {
                      
@@ -275,6 +366,7 @@ class WorkoutFrame extends JFrame{
                   
                   //회원(id) - 워크아웃리스트 - 해당 날짜 워크아웃 -운동리스트의 운동 객체, 날짜객체에 날짜 추가
                   ((Trainee)Main.memberSet.get(idx)).addWorkout(date,ex);
+                  
                   model.setNumRows(0);
                   ArrayList<WorkoutList> list = ((Trainee)Main.memberSet.get(idx)).listOfWorkOut();
                   idx=0;
@@ -282,7 +374,7 @@ class WorkoutFrame extends JFrame{
                      if(list.get(j).getDate().equals(date))
                      {
                         idx=j;
-                        //System.out.println(list.get(idx).getExerciseList().size());
+                    
                         for(int i=0; i<list.get(idx).getExerciseList().size();i++) {
                            String[] row1 = new String[8];
                            row1[0] = list.get(idx).getExerciseList().get(i).getTargetMuscle();
@@ -293,13 +385,9 @@ class WorkoutFrame extends JFrame{
                            row1[5] = String.valueOf(list.get(idx).getDate().getYear());
                            row1[6] = String.valueOf(list.get(idx).getDate().getMonth());
                            row1[7] = String.valueOf(list.get(idx).getDate().getDay());
-                           /*for(String s:row) {
-                              System.out.println(s);
-                           }*/
+                       
                            WorkoutFrame.model.addRow(row1);
                         }
-                        
-                        
                      }
                   }
                 
@@ -316,19 +404,21 @@ class WorkoutFrame extends JFrame{
            
         });
         
-        //찾기 버튼 action
-        searchExercise.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            {
-            	new DateSelect(id);
-            }
-            //날짜가 같은 WorkoutList에서 getExercise
-                  //id회원의 workoutList의 workout 중 date가 같은 workout의 운동 리스트의 운동
-         }
-           
-        });
+       
+        /*
+         * 찾기 버튼 action
+         * 찾기 버튼을 누르면 팝업창을 띄워준다.
+         */
+        searchExercise.addActionListener(event->new DateSelect(id));
         
+        
+       
+        /*
+         * 운동 저장 버튼
+         * 워크아웃 삭제 후에 데이터베이스에 반영을 한다.
+         * 버튼을 누르지 않을 시에는 프로그램을 재 실행하였을 때 삭제한 행동이 반영되지 않는다.
+         * 삭제하면 돌이킬 수 없기때문
+         */
         saveExercise.addActionListener(new ActionListener(){
 
          @Override
@@ -343,7 +433,11 @@ class WorkoutFrame extends JFrame{
            
         });
     
-    
+        /*
+         *운동 삭제 버튼 액션
+         *입력 받은 날짜의 워크아웃을 삭제한다.
+         *삭제 후에는 저장 버튼을 눌러야 프로그램 재 실행시에 반영이 된다.
+         */
         deleteExercise.addActionListener(new ActionListener() {
 
          @Override
@@ -353,9 +447,9 @@ class WorkoutFrame extends JFrame{
             String month = exerciseDateMonth.getText();
             String day = exerciseDateDay.getText();
             try {
-            rows.add(Integer.valueOf(exerciseDateYear.getText()));
-            rows.add(Integer.valueOf(exerciseDateMonth.getText()));
-            rows.add(Integer.valueOf(exerciseDateDay.getText()));
+            rows.add(Integer.valueOf(year));
+            rows.add(Integer.valueOf(month));
+            rows.add(Integer.valueOf(day));
             int tag=0; int tag2=0;
             
                for(int i=0;i<3;i++) {
@@ -379,10 +473,9 @@ class WorkoutFrame extends JFrame{
                         tag=1;
                      }
                   }
-               }
-               
+               }  
                if(tag2!=1) {
-                  Date date = new Date(Integer.valueOf(exerciseDateYear.getText()),Integer.valueOf(exerciseDateMonth.getText()),Integer.valueOf(exerciseDateDay.getText()));
+                  Date date = new Date(Integer.valueOf(year),Integer.valueOf(month),Integer.valueOf(day));
                      
                    //id회원의 workoutList의 workout 중 date가 같은 workout의 운동 리스트의 운동
                   int findID=0;
@@ -418,11 +511,8 @@ class WorkoutFrame extends JFrame{
             }
             catch(Exception err) {   
                JOptionPane.showMessageDialog(null, "날짜를 올바르게 입력해주세요.");
-            }
-            
-         }
-           
-           
+            }   
+         }  
         });
         
     

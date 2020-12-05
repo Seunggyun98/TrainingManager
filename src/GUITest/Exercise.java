@@ -1,11 +1,16 @@
 package GUITest;
 
+/**
+ * 운동 데이터를 담는 클래스
+ * @author 승균
+ *
+ */
 class Exercise {
-	String exName;
-	String targetMuscle;
-	int reps;
-	int set;
-	double weight;
+	private String exName;
+	private String targetMuscle;
+	private int reps;
+	private int set;
+	private double weight;
 	
 	public Exercise(String exName, String targetMuscle, int reps, int set, double weight) {
 		this.exName = exName;
@@ -45,8 +50,5 @@ class Exercise {
 	public void setWeight(double weight) {
 		this.weight=weight;
 	}
-	public String toString() {
-		return exName+" "+targetMuscle+" "+reps +" "+set+" "+weight;
-		
-	}
+	
 }
