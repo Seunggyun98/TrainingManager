@@ -1,4 +1,4 @@
-package GUITest;
+package app;
 
 /**
  * 운동 데이터를 담는 클래스

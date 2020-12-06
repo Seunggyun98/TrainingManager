@@ -1,4 +1,4 @@
-package GUITest;
+package app;
 
 import java.util.*;
 
