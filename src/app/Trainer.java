@@ -34,81 +34,88 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 
-class TrainerGUI extends JFrame{
-		static ArrayList<Trainee> traineelist;
-		static int trainerId=0;
-		public static ArrayList<Trainee> getTraineeList() {
-			return traineelist;
-		}
-		private void setTraineeList(ArrayList<Trainee> traineelist) {
-			this.traineelist=traineelist;
-		}
-		public static int getTrainerId() {
-			return trainerId;
-		}
-		private void setTrainerId(int trainerId) {
-			this.trainerId=trainerId;
-		}
-		public TrainerGUI(int id){
-			setTrainerId(id);
-			setDefaultCloseOperation(EXIT_ON_CLOSE);
-			setAlwaysOnTop(true);
-			setBounds(400, 200, 500, 300);
-			String[] colNames = new String[] {"Id", "Name", "Gender","Age"};
-			DefaultTableModel model = new DefaultTableModel(colNames, 0);
-			JTable table = new JTable(model);
-			JScrollPane scrollPane = new JScrollPane(table);
-			add(scrollPane, BorderLayout.CENTER);	
-			
-			JPanel btnPanel = new JPanel();
-			btnPanel.setLayout(new FlowLayout());
-			JButton btnSelect = new JButton("선택");
-			btnPanel.add(btnSelect);
-			add(btnPanel,BorderLayout.SOUTH);
-			btnSelect.addActionListener(new ActionListener() {
 
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					int row = table.getSelectedRow();
-					int selectID = Integer.valueOf((String) table.getModel().getValueAt(row,0));
-					String selectName = (String) table.getModel().getValueAt(row,1);
-					JOptionPane.showMessageDialog(null,selectName+"님의 워크아웃 정보를 확인합니다.");
-					new WorkoutGUI(selectID);
-					setVisible(false);
-				}
-				
-			});
-	
-			
-			String[] arr=new String[4];
-			
-			for(int i=0;i<Main.memberSet.size();i++) {
-				if(Main.memberSet.get(i).getId()==getTrainerId()) {
-					setTraineeList(((Trainer)Main.memberSet.get(i)).getTraineeList());
-					break;
-				}
-			}
-			if(getTraineeList()==null) {
-				JOptionPane.showMessageDialog(null,"담당중인 회원 목록이 없습니다.");
-			}
-			else {
-				for(int i=0;i<getTraineeList().size();i++) {
-					arr[0]=Integer.toString(getTraineeList().get(i).getId());
-					arr[1]=getTraineeList().get(i).getName();
-					arr[2]=getTraineeList().get(i).getSex();
-					arr[3]=Integer.toString(getTraineeList().get(i).getAge());
-					model.addRow(arr);
-				}
-				setVisible(true);
-			}
-			
-			
-			
-			
+
+/**
+ * 트레이너의 GUI를 띄워주는 클래스 이다.
+ * 여기서 관리하는 회원의 목록을 띄워주고
+ * 그 회원의 워크아웃 페이지를 관리 할 수 있다.
+ * @author 태홍
+ *
+ */
+class TrainerGUI extends JFrame{
+	private static ArrayList<Trainee> traineelist;
+	private static int trainerId=0;
+	public static ArrayList<Trainee> getTraineeList() {
+		return traineelist;
 	}
+	private void setTraineeList(ArrayList<Trainee> traineelist) {
+		this.traineelist=traineelist;
+	}
+	public static int getTrainerId() {
+		return trainerId;
+	}
+	private void setTrainerId(int trainerId) {
+		this.trainerId=trainerId;
+	}
+	public TrainerGUI(int id){
+		setTrainerId(id);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setAlwaysOnTop(true);
+		setBounds(400, 200, 500, 300);
+		String[] colNames = new String[] {"Id", "Name", "Gender","Age"};
+		DefaultTableModel model = new DefaultTableModel(colNames, 0);
+		JTable table = new JTable(model);
+		JScrollPane scrollPane = new JScrollPane(table);
+		add(scrollPane, BorderLayout.CENTER);	
 		
+		JPanel btnPanel = new JPanel();
+		btnPanel.setLayout(new FlowLayout());
+		JButton btnSelect = new JButton("선택");
+		btnPanel.add(btnSelect);
+		add(btnPanel,BorderLayout.SOUTH);
+		btnSelect.addActionListener(new ActionListener() {
+			//회원을 고르고 선택 버튼을 눌렀을 경우이다.
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				int row = table.getSelectedRow();
+				int selectID=0;
+				//아무것도 고르지 않고 선택을 누른 경우 오류메세지를 출력한다.
+				if(row==-1) JOptionPane.showMessageDialog(null,"선택을 해주십시오.");
+				else {
+					selectID = Integer.valueOf((String) table.getModel().getValueAt(row,0));
+				String selectName = (String) table.getModel().getValueAt(row,1);
+				JOptionPane.showMessageDialog(null,selectName+"님의 워크아웃 정보를 확인합니다.");
+				new WorkoutGUI(selectID);
+				setVisible(false);
+				}
+			}
+			
+		});
+
 		
+		String[] arr=new String[4];
 		
+		for(int i=0;i<Main.memberSet.size();i++) {
+			if(Main.memberSet.get(i).getId()==getTrainerId()) {
+				setTraineeList(((Trainer)Main.memberSet.get(i)).getTraineeList());
+				break;
+			}
+		}
+		if(getTraineeList()==null) {
+			JOptionPane.showMessageDialog(null,"담당중인 회원 목록이 없습니다.");
+		}
+		else {
+			for(int i=0;i<getTraineeList().size();i++) {
+				arr[0]=Integer.toString(getTraineeList().get(i).getId());
+				arr[1]=getTraineeList().get(i).getName();
+				arr[2]=getTraineeList().get(i).getSex();
+				arr[3]=Integer.toString(getTraineeList().get(i).getAge());
+				model.addRow(arr);
+			}
+			setVisible(true);
+		}
+	}	
 }
 
 
@@ -120,7 +127,6 @@ class TrainerGUI extends JFrame{
 class Trainer extends Member{
 	private ArrayList<Trainee> traineeList = new ArrayList<>();
 	private int traineeNum = traineeList.size();
-	static int trainerId;
 	
 	public static void TrainerRun(int id) {
 		new TrainerGUI(id);

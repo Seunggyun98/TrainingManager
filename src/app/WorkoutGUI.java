@@ -64,10 +64,8 @@ class DateSelect extends JFrame{
     * @param id 로그인 한 유저의 ID
     */
    public DateSelect(int id) {
-	   setTitle("Training Manager");
+	  setTitle("Training Manager");
       ArrayList<WorkoutList> workoutlist = null;
-   
-      setDefaultCloseOperation(EXIT_ON_CLOSE);
       setAlwaysOnTop(true);
       setBounds(400, 200, 500, 300);
       JTable table = new JTable(model);
@@ -185,7 +183,7 @@ class WorkoutFrame extends JFrame{
     public WorkoutFrame(int id){
     	setTitle("Training Manager");
         setSize(DEFAULT_WIDTH,DEFAULT_HEIGHT);
-
+        setResizable(false);
         //setResizable(false);
         
         //상단 메뉴바
@@ -206,7 +204,7 @@ class WorkoutFrame extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				setVisible(false);
-				new TextField1();
+				new StartUI();
 			}
         	
         });
@@ -245,8 +243,15 @@ class WorkoutFrame extends JFrame{
         textPanel.setLayout(new GridLayout(10,1));
         
         JLabel exerciseLabel = new JLabel("운동 부위");
-        //운동 부위를 입력하는 텍스트 필드
-        JTextField exercise = new JTextField(4);
+        //운동 부위를 선택하는 콤보박스
+        JComboBox<String> exerciseCombo = new JComboBox<>();
+        exerciseCombo.addItem("등");
+        exerciseCombo.addItem("가슴");
+        exerciseCombo.addItem("하체");
+        exerciseCombo.addItem("어깨");
+        exerciseCombo.addItem("팔");
+        exerciseCombo.addItem("코어");
+        exerciseCombo.addItem("유산소");
         
         JLabel exerciseNameLabel = new JLabel("운동 이름");
         //운동 이름을 입력하는 텍스트 필드
@@ -280,7 +285,7 @@ class WorkoutFrame extends JFrame{
         datePanel.add(exerciseDateDayLabel);
 
         textPanel.add(exerciseLabel);
-        textPanel.add(exercise);
+        textPanel.add(exerciseCombo);
         textPanel.add(exerciseNameLabel);
         textPanel.add(exerciseName);
         textPanel.add(exerciseSetLabel);
@@ -319,7 +324,8 @@ class WorkoutFrame extends JFrame{
             //입력된 값 테이블에 출력
             String[] rows = new String[8];
             //문자
-            rows[0] = exercise.getText();
+            //rows[0] = exercise.getText();
+            rows[0] = exerciseCombo.getItemAt(exerciseCombo.getSelectedIndex());
             rows[1] = exerciseName.getText();
             //숫자입력받아야함
             rows[2] = exerciseSet.getText();
@@ -346,7 +352,7 @@ class WorkoutFrame extends JFrame{
                   Date date = new Date(Integer.valueOf(rows[5]),Integer.valueOf(rows[6]),Integer.valueOf(rows[7]));
                   
                   //텍스트 필드 값 제거
-                  exercise.setText("");
+                  //exercise.setText("");
                   exerciseName.setText("");
                   exerciseSet.setText("");
                   exerciseReps.setText("");
@@ -390,12 +396,9 @@ class WorkoutFrame extends JFrame{
                         }
                      }
                   }
+                  JOptionPane.showMessageDialog(null, "운동이 추가되었습니다."
+                          + " 저장 버튼을 꼭 눌러주세요!");
                 
-                  try {
-                     Database.saveWorkout();
-                  } catch (IOException e1) {
-                     e1.printStackTrace();
-                  }
                }catch(NumberFormatException err) {
                   JOptionPane.showMessageDialog(null, "횟수, 세트수, 중량, 날짜는 숫자로 입력해주세요");
                }

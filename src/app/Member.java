@@ -2,6 +2,11 @@ package app;
 
 import java.util.ArrayList;
 
+/**
+ * 회원에 대한 정보를 담는 클래스
+ * @author 승균
+ *
+ */
 class Member {
 	private String name;
 	private String sex;
@@ -24,19 +29,27 @@ class Member {
 	public String getName() {
 		return name;
 	}
-
+	public void setName(String name) {
+		this.name=name;
+	}
 	public String getSex() {
 		return sex;
 	}
-
+	public void setSex(String sex) {
+		this.sex=sex;
+	}
 	public int getAge() {
 		return age;
 	}
-
+	public void setAge(int age) {
+		this.age=age;
+	}
 	public int getId() {
 		return id;
 	}
-	
+	public void setId(int id) {
+		this.id=id;
+	}
 	public int getType() {
 		return type;
 	}

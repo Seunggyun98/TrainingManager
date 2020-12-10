@@ -3,6 +3,7 @@ package app;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.Objects;
 import java.util.Scanner;
 
 
@@ -50,6 +51,7 @@ class WorkoutList implements Comparable<WorkoutList>{
 
 	@Override
 	public int compareTo(WorkoutList w) {
+
 		return this.exerciseDate.compareTo(w.exerciseDate);
 	}
 }
@@ -77,7 +79,7 @@ class Date implements Comparable<Date>{
 	}
 
 	/**
-	 * 날짜를 비교하기위한 메서드
+	 * 날짜를 비교하기위한 equals 메서드 오버라이딩
 	 */
 	@Override
 	public boolean equals(Object otherObject){
@@ -88,7 +90,20 @@ class Date implements Comparable<Date>{
 		Date other = (Date)otherObject;
 		return other.getYear() == this.year && other.getMonth() == this.month && other.getDay() == this.day;
 	}
-
+	/**
+	 * equals메소드와 함께 hashCode메소드 오버라이딩
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		
+		result = prime * result + year;
+		result = prime * result + month;
+		result = prime * result + day;
+		return result;
+	}
+	
 	public int getYear(){
 		return this.year;
 	}

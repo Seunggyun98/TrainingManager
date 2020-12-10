@@ -22,7 +22,7 @@ import java.io.File;
  */
 public class Main {
 	//트레이너와 회원들의 명단을 담고 있는 리스트
-	static List<Member> memberSet = new ArrayList<>();
+	public static List<Member> memberSet = new ArrayList<>();
 	public static void main(String[] args) {
 		
 		//전체 명단을 불러온 후 성공 여부를 보여줌
@@ -69,57 +69,66 @@ public class Main {
 		}
 		
 		//GUI실행
-		new TextField1();
+		new StartUI();
 		
 	}
 
 }
 
-class TextField1 extends JFrame{
-	   static int id=-1;
-	   static int login_cnt = 0;
-	   public TextField1() 
+
+/**
+ * 초기 화면에 대한 GUI클래스
+ * @author 태홍
+ *
+ */
+class StartUI extends JFrame{
+	   private static int id=-1;
+	   public StartUI() 
 	   {
-	      setTitle("Training Manager");
-	      this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	      LogIn login = new LogIn();
-	      Register register = new Register();
-	      Panel p = new Panel();
-	      Label lab=new Label("아 이 디    : ");
-	      TextField txt=new TextField("",4);
-	      JButton Blogin=new JButton("로그인");
-	      JButton BsignIn=new JButton("회원가입");
-	      p.add(lab);
-	      p.add(txt);
-	      add(p);
-	      p.add(BsignIn);
-	      p.add(Blogin); 
-	      p.setLayout(null);
-	      lab.setBounds(20,30,70,22);
-	      txt.setBounds(100,30,90,22);
-	      BsignIn.setBounds(10, 60, 90, 30);
-	      Blogin.setBounds(110,60,90,30);
-	      setSize(250,200);
-	      setVisible(true);
-	        Blogin.addActionListener( new ActionListener() {
-	             public void actionPerformed(ActionEvent e) { 
-	            if(txt.getText().length()>=5) {
-	            	JOptionPane.showMessageDialog(null,"id는 4글자 아래만 가능합니다.");
-	            }
-	            else try {
-	            	if(login.login(Integer.valueOf(txt.getText()))==0)
-	            		setVisible(false);
-	            	
-	  	       }catch(Exception e1) {
-	  	           JOptionPane.showMessageDialog(null,"숫자로 된 id를 입력해 주십시오.");
-	  	       }
-	          }
-	  } );
-	        BsignIn.addActionListener( new ActionListener() {
-	             public void actionPerformed(ActionEvent e) { 
-	                Register r = new Register();
-	                r.RegisterRun();
-	          }
-	  } );  
-	}
+		      setTitle("Training Manager");
+		      this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		      LogIn login = new LogIn();
+		      Panel p = new Panel();
+		      Label lab=new Label("아 이 디    : ");
+		      TextField txt=new TextField("",4);
+		      JButton Blogin=new JButton("로그인");
+		      JButton BsignIn=new JButton("회원가입");
+		      p.add(lab);
+		      p.add(txt);
+		      add(p);
+		      p.add(BsignIn);
+		      p.add(Blogin); 
+		      p.setLayout(null);
+		      lab.setBounds(20,30,70,22);
+		      txt.setBounds(100,30,90,22);
+		      BsignIn.setBounds(10, 60, 90, 30);
+		      Blogin.setBounds(110,60,90,30);
+		      setSize(250,200);
+		      setVisible(true);
+		      Blogin.addActionListener( new ActionListener() {
+		    	  public void actionPerformed(ActionEvent e) { 
+			            if(txt.getText().length()>=5) {
+			            	//id는 4글자 이하의 숫자로만 입력받는다.
+			            	JOptionPane.showMessageDialog(null,"id는 4글자 아래만 가능합니다.");
+			            }
+			            else try {
+			            	//제대로 된 입력이 들어왔을 경우에 로그인클래스로 아이디를 넘겨준다.
+			            	if(login.login(Integer.valueOf(txt.getText()))==0) {
+			            		setVisible(false);
+			            	}
+			  	       }catch(Exception e1) {
+			  	    	   //숫자가 아닌경우의 오류메세지를 띄워준다.
+			  	           JOptionPane.showMessageDialog(null,"숫자로 된 id를 입력해 주십시오.");
+			  	       }
+		          }
+		     } );
+		      
+		     BsignIn.addActionListener( new ActionListener() {
+		    	 	public void actionPerformed(ActionEvent e) {
+			    		//회원가입 버튼을 눌렀을 경우 회원가입 클래스의 GUI를 띄워준다.
+			         	Register r = new Register();
+			         	r.RegisterRun();
+		       		}
+		     } );  
+	   }
 }
